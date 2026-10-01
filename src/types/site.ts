@@ -8,6 +8,8 @@ export interface Game {
   badge?: string;
   rating?: number;
   playCount?: string;
+  isMemberOnly?: boolean;
+  supportsFreeSpins?: boolean;
 }
 
 export interface GameCategory {
@@ -35,6 +37,7 @@ export interface WinnerRecord {
   amount: number;
   currency: string;
   provider: string;
+  timestamp?: string;
 }
 
 export interface Notice {
@@ -49,4 +52,39 @@ export interface LanguageOption {
   name: string;
   nativeName: string;
   flag: string;
+}
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  phone: string;
+  balance: number;
+  vipLevel: number;
+  avatar: string;
+  isLoggedIn: boolean;
+  earnedFreeSpins: Record<string, number>; // gameId -> spins count
+  completedTasks: string[];
+}
+
+export interface TaskItem {
+  id: string;
+  title: string;
+  description: string;
+  rewardType: "free_spins" | "demo_cash";
+  rewardAmount: number;
+  targetGameId?: number | string;
+  targetGameName?: string;
+  icon: string;
+  progress: number;
+  maxProgress: number;
+  claimed: boolean;
+}
+
+export interface WalletTransaction {
+  id: string;
+  type: "deposit" | "withdraw" | "task_reward" | "win" | "bet";
+  amount: number;
+  title: string;
+  timestamp: string;
+  status: "completed" | "processing" | "cancelled";
 }

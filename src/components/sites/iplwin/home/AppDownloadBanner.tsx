@@ -20,19 +20,25 @@ export function AppDownloadBanner() {
 
           {/* Download buttons */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
-            <button className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#444444] hover:border-[#D1AE52] transition-colors text-left">
-              <span className="text-2xl">🤖</span>
+            <button
+              onClick={() => alert("Android PWA: Open in Chrome/Brave, tap the three dots (⋮) in the top-right corner, and tap 'Add to Home screen' or 'Install App' for instant one-tap launch!")}
+              className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#444444] hover:border-[#D1AE52] transition-colors text-left group active:scale-95"
+            >
+              <span className="text-2xl group-hover:scale-110 transition-transform">🤖</span>
               <div>
-                <span className="block text-[10px] text-gray-400 uppercase">Download for</span>
-                <span className="block text-xs font-bold text-white">Android APK</span>
+                <span className="block text-[10px] text-gray-400 uppercase font-semibold">Web App for</span>
+                <span className="block text-xs font-bold text-white group-hover:text-[#D1AE52] transition-colors">Android PWA</span>
               </div>
             </button>
 
-            <button className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#444444] hover:border-[#D1AE52] transition-colors text-left">
-              <span className="text-2xl">🍏</span>
+            <button
+              onClick={() => alert("iOS Safari: Tap the Share button at the bottom of Safari, scroll down, and select 'Add to Home Screen' to enjoy full-screen app experience!")}
+              className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-[#0A0A0A] hover:bg-[#1A1A1A] border border-[#444444] hover:border-[#D1AE52] transition-colors text-left group active:scale-95"
+            >
+              <span className="text-2xl group-hover:scale-110 transition-transform">🍏</span>
               <div>
-                <span className="block text-[10px] text-gray-400 uppercase">Install for</span>
-                <span className="block text-xs font-bold text-white">Apple iOS PWA</span>
+                <span className="block text-[10px] text-gray-400 uppercase font-semibold">Add to Home for</span>
+                <span className="block text-xs font-bold text-white group-hover:text-[#D1AE52] transition-colors">Apple iOS</span>
               </div>
             </button>
           </div>

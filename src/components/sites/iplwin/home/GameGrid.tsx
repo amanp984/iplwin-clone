@@ -84,6 +84,7 @@ export function GameGrid({
               >
                 {/* Thumbnail Container */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#0A0A0A]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={game.thumbnail}
                     alt={game.name}

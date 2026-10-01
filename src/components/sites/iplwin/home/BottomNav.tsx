@@ -7,6 +7,8 @@ interface BottomNavProps {
   onSelectTab: (tab: string) => void;
   onOpenAuth: (mode: "login" | "register") => void;
   onOpenDeposit: () => void;
+  isLoggedIn?: boolean;
+  onOpenProfile?: () => void;
 }
 
 export function BottomNav({
@@ -14,6 +16,8 @@ export function BottomNav({
   onSelectTab,
   onOpenAuth,
   onOpenDeposit,
+  isLoggedIn,
+  onOpenProfile,
 }: BottomNavProps) {
   const navItems = [
     { key: "home", label: "Home", icon: "🏠" },
@@ -47,7 +51,11 @@ export function BottomNav({
               key={item.key}
               onClick={() => {
                 if (item.key === "mine") {
-                  onOpenAuth("login");
+                  if (isLoggedIn && onOpenProfile) {
+                    onOpenProfile();
+                  } else {
+                    onOpenAuth("login");
+                  }
                 } else {
                   onSelectTab(item.key);
                 }

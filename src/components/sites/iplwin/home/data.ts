@@ -1,4 +1,4 @@
-import { Game, GameCategory, BannerSlide, WinnerRecord, Notice, LanguageOption } from "@/types/site";
+import { Game, GameCategory, BannerSlide, WinnerRecord, Notice, LanguageOption, TaskItem, UserProfile, WalletTransaction } from "@/types/site";
 
 export const CATEGORIES: GameCategory[] = [
   { id: "hot", name: "Hot", iconName: "HotIcon", count: 48, providers: ["All", "JILI", "Spribe", "PG Soft", "WG", "INOUT", "KingMidas"] },
@@ -24,6 +24,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "3.2M",
+    supportsFreeSpins: false,
   },
   {
     id: 3150300,
@@ -34,6 +35,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "1.9M",
+    supportsFreeSpins: true,
   },
   {
     id: 3150049,
@@ -44,6 +46,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "2.4M",
+    supportsFreeSpins: true,
   },
   {
     id: 3150094,
@@ -54,6 +57,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "4.1M",
+    supportsFreeSpins: false,
   },
   {
     id: 3150124,
@@ -64,6 +68,7 @@ export const GAMES: Game[] = [
     tag: "NEW",
     rating: 4.7,
     playCount: "890K",
+    supportsFreeSpins: false,
   },
   {
     id: 3150200,
@@ -74,6 +79,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.6,
     playCount: "650K",
+    supportsFreeSpins: false,
   },
   {
     id: 3150051,
@@ -84,6 +90,7 @@ export const GAMES: Game[] = [
     tag: "JACKPOT",
     rating: 4.9,
     playCount: "5.8M",
+    supportsFreeSpins: true,
   },
   {
     id: 2000135,
@@ -94,6 +101,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "1.2M",
+    supportsFreeSpins: false,
   },
   {
     id: 3660003,
@@ -104,6 +112,7 @@ export const GAMES: Game[] = [
     tag: "NEW",
     rating: 4.9,
     playCount: "950K",
+    supportsFreeSpins: false,
   },
   {
     id: 3660008,
@@ -114,6 +123,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.7,
     playCount: "820K",
+    supportsFreeSpins: false,
   },
   {
     id: 5008,
@@ -124,6 +134,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "1.6M",
+    supportsFreeSpins: false,
   },
   {
     id: 5001,
@@ -134,6 +145,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.7,
     playCount: "740K",
+    supportsFreeSpins: false,
   },
   {
     id: 312005,
@@ -144,6 +156,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "2.1M",
+    supportsFreeSpins: false,
   },
   {
     id: 10280084,
@@ -154,6 +167,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "3.5M",
+    supportsFreeSpins: false,
   },
   {
     id: 1016,
@@ -164,6 +178,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "2.8M",
+    supportsFreeSpins: false,
   },
   {
     id: 3150289,
@@ -174,6 +189,7 @@ export const GAMES: Game[] = [
     tag: "JACKPOT",
     rating: 4.8,
     playCount: "1.1M",
+    supportsFreeSpins: false,
   },
   {
     id: 3150074,
@@ -184,6 +200,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.7,
     playCount: "980K",
+    supportsFreeSpins: false,
   },
   {
     id: 317000,
@@ -194,6 +211,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "5.2M",
+    isMemberOnly: true,
   },
   {
     id: 1012000,
@@ -204,6 +222,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "3.7M",
+    isMemberOnly: true,
   },
   {
     id: 1014000,
@@ -214,6 +233,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.9,
     playCount: "8.4M",
+    isMemberOnly: true,
   },
   {
     id: 328000,
@@ -224,6 +244,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.8,
     playCount: "3.1M",
+    isMemberOnly: true,
   },
   {
     id: 87000,
@@ -234,6 +255,7 @@ export const GAMES: Game[] = [
     tag: "HOT",
     rating: 4.6,
     playCount: "420K",
+    isMemberOnly: true,
   },
   {
     id: 74000,
@@ -244,6 +266,7 @@ export const GAMES: Game[] = [
     tag: "NEW",
     rating: 4.7,
     playCount: "310K",
+    isMemberOnly: true,
   },
   {
     id: 39000,
@@ -254,23 +277,24 @@ export const GAMES: Game[] = [
     tag: "NEW",
     rating: 4.5,
     playCount: "190K",
+    isMemberOnly: true,
   }
 ];
 
 export const BANNERS: BannerSlide[] = [
   {
     id: 1,
-    title: "Super VIP 111,111 ₹ Bonus",
-    subtitle: "Level up your status with weekly cashback, luxury birthday gifts & 24/7 personal VIP manager",
-    badge: "VIP EXCLUSIVE",
-    ctaText: "Claim VIP Bonus",
+    title: "Super VIP Tier Rewards",
+    subtitle: "Unlock exclusive VIP privileges, faster demo processing, weekly tier bonuses & custom avatar frames",
+    badge: "VIP CLUB",
+    ctaText: "Explore VIP Levels",
     bgGradient: "from-[#2A1E00] via-[#1A1A1A] to-[#0A0A0A]",
     imageUrl: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=1200&auto=format&fit=crop&q=80",
   },
   {
     id: 2,
-    title: "Registration 111 ₹ Instant Bonus",
-    subtitle: "Sign up today with your mobile number and receive ₹111 free trial balance with no deposit required!",
+    title: "Registration 111 ₹ Starter Bonus",
+    subtitle: "Sign up today with your phone number and get ₹111 free demo credits credited to your account!",
     badge: "NEW MEMBER",
     ctaText: "Register Now",
     bgGradient: "from-[#3B1200] via-[#1F1005] to-[#0A0A0A]",
@@ -278,57 +302,57 @@ export const BANNERS: BannerSlide[] = [
   },
   {
     id: 3,
-    title: "Lucky Wheel Points Giveaway",
-    subtitle: "Deposit daily to spin the gold fortune wheel — 100% win rate up to ₹150,000 real cash prizes",
-    badge: "DAILY REWARD",
-    ctaText: "Spin The Wheel",
+    title: "Daily Tasks & Earn Free Spins",
+    subtitle: "Complete easy daily tasks to earn genuine free spins on Fortune Gems 3, Super Ace and Money Coming!",
+    badge: "TASKS & REWARDS",
+    ctaText: "View Daily Tasks",
     bgGradient: "from-[#0E2413] via-[#121B14] to-[#0A0A0A]",
     imageUrl: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=1200&auto=format&fit=crop&q=80",
   },
   {
     id: 4,
-    title: "Bank Card 1.5% Unlimited Cashback",
-    subtitle: "Every deposit made through UPI, PhonePe, Paytm or NetBanking receives instant 1.5% extra bonus",
-    badge: "DEPOSIT REBATE",
-    ctaText: "Deposit Now",
+    title: "Aviator & Chicken Road 2.0 Challenge",
+    subtitle: "Test your prediction skill in real-time crash multiplier games with interactive demo gameplay",
+    badge: "CRASH MINI GAMES",
+    ctaText: "Play Demo Games",
     bgGradient: "from-[#261533] via-[#17121D] to-[#0A0A0A]",
     imageUrl: "https://images.unsplash.com/photo-1606167668584-78701c57f13d?w=1200&auto=format&fit=crop&q=80",
   }
 ];
 
 export const WINNERS: WinnerRecord[] = [
-  { id: "1", userId: "9***02", gameName: "Money Coming", amount: 505, currency: "₹", provider: "JILI" },
-  { id: "2", userId: "3***87", gameName: "Super Ace", amount: 119, currency: "₹", provider: "JILI" },
-  { id: "3", userId: "3***14", gameName: "Fortune Gems 3", amount: 71, currency: "₹", provider: "JILI" },
-  { id: "4", userId: "2***99", gameName: "Ocean King Jackpot", amount: 2018, currency: "₹", provider: "JILI" },
-  { id: "5", userId: "1***12", gameName: "Money Coming", amount: 5001, currency: "₹", provider: "JILI" },
-  { id: "6", userId: "2***44", gameName: "Super Ace", amount: 79.5, currency: "₹", provider: "JILI" },
-  { id: "7", userId: "7***81", gameName: "Money Coming", amount: 1990, currency: "₹", provider: "JILI" },
-  { id: "8", userId: "2***72", gameName: "Fortune Gems 3", amount: 495, currency: "₹", provider: "JILI" },
-  { id: "9", userId: "6***11", gameName: "Super Ace", amount: 102.3, currency: "₹", provider: "JILI" },
-  { id: "10", userId: "5***30", gameName: "Aviator", amount: 14200, currency: "₹", provider: "Spribe" },
-  { id: "11", userId: "8***67", gameName: "Chicken Road 2.0", amount: 3450, currency: "₹", provider: "INOUT" },
-  { id: "12", userId: "4***91", gameName: "Rummy", amount: 8900, currency: "₹", provider: "JILI" },
+  { id: "1", userId: "player_9***2", gameName: "Money Coming", amount: 505, currency: "₹", provider: "JILI", timestamp: "2m ago" },
+  { id: "2", userId: "demo_user3***7", gameName: "Super Ace", amount: 119, currency: "₹", provider: "JILI", timestamp: "4m ago" },
+  { id: "3", userId: "player_3***4", gameName: "Fortune Gems 3", amount: 71, currency: "₹", provider: "JILI", timestamp: "6m ago" },
+  { id: "4", userId: "player_2***9", gameName: "Ocean King Jackpot", amount: 2018, currency: "₹", provider: "JILI", timestamp: "9m ago" },
+  { id: "5", userId: "guest_1***2", gameName: "Money Coming", amount: 5001, currency: "₹", provider: "JILI", timestamp: "12m ago" },
+  { id: "6", userId: "player_2***4", gameName: "Super Ace", amount: 79.5, currency: "₹", provider: "JILI", timestamp: "15m ago" },
+  { id: "7", userId: "demo_7***1", gameName: "Money Coming", amount: 1990, currency: "₹", provider: "JILI", timestamp: "18m ago" },
+  { id: "8", userId: "player_2***2", gameName: "Fortune Gems 3", amount: 495, currency: "₹", provider: "JILI", timestamp: "21m ago" },
+  { id: "9", userId: "player_6***1", gameName: "Super Ace", amount: 102.3, currency: "₹", provider: "JILI", timestamp: "24m ago" },
+  { id: "10", userId: "aviator_pro***0", gameName: "Aviator", amount: 14200, currency: "₹", provider: "Spribe", timestamp: "28m ago" },
+  { id: "11", userId: "demo_8***7", gameName: "Chicken Road 2.0", amount: 3450, currency: "₹", provider: "INOUT", timestamp: "32m ago" },
+  { id: "12", userId: "rummy_fan***1", gameName: "Rummy", amount: 8900, currency: "₹", provider: "JILI", timestamp: "35m ago" },
 ];
 
 export const NOTICES: Notice[] = [
   {
     id: 1,
-    title: "IPLwin Lucky Bonus is Live!",
-    content: "The IPLwin Lucky Bonus is now live! 🎉 All users with a withdrawal record have a chance to win prizes ranging from 50,000 to 150,000 RS. Winners will be announced via in-site messages and pop-up notifications.",
+    title: "IPLwin Gaming Platform v2.0 Live",
+    content: "Welcome to the upgraded IPLwin Gaming Experience. Enjoy ultra-smooth navigation, interactive demo games, and our new Tasks & Rewards Hub.",
     date: "2026-10-01"
   },
   {
     id: 2,
-    title: "Fast Withdrawal Guarantee",
-    content: "IPLwin is committed to providing customers with a seamless and hassle-free experience. All player transactions are completed within 3 minutes. We provide safe, reliable and fast deposit and withdrawal services around the clock.",
-    date: "2026-09-30"
+    title: "Earn Free Spins in Daily Tasks Hub",
+    content: "Free spins are not granted automatically — complete daily check-ins and gameplay tasks in the Rewards section to earn genuine free spins for Super Ace and Fortune Gems 3!",
+    date: "2026-10-01"
   },
   {
     id: 3,
-    title: "Official Channel & Telegram Notices",
-    content: "Please beware of impersonators. IPLwin's official customer support and bonus channels are only verified through our official web application and verified Telegram channel @iplwin_official.",
-    date: "2026-09-28"
+    title: "Simulated Entertainment Mode Notice",
+    content: "All demo balances, chips, and simulated games are intended solely for testing, demonstration, and gaming entertainment. Please enjoy responsibly.",
+    date: "2026-09-30"
   }
 ];
 
@@ -341,4 +365,80 @@ export const LANGUAGES: LanguageOption[] = [
   { code: "kn", name: "Kannada", nativeName: "ಕನ್ನಡ", flag: "🇮🇳" },
   { code: "bn", name: "Bengali", nativeName: "বাংলা", flag: "🇮🇳" },
   { code: "pa", name: "Punjabi", nativeName: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
+];
+
+export const INITIAL_TASKS: TaskItem[] = [
+  {
+    id: "task_checkin",
+    title: "Daily Check-in",
+    description: "Sign in today to claim 3 Free Spins on Fortune Gems 3",
+    rewardType: "free_spins",
+    rewardAmount: 3,
+    targetGameId: 3150300,
+    targetGameName: "Fortune Gems 3",
+    icon: "📅",
+    progress: 1,
+    maxProgress: 1,
+    claimed: false,
+  },
+  {
+    id: "task_play3",
+    title: "Play 3 Demo Rounds",
+    description: "Play at least 3 rounds in any demo game to unlock 6 Free Spins on Super Ace",
+    rewardType: "free_spins",
+    rewardAmount: 6,
+    targetGameId: 3150049,
+    targetGameName: "Super Ace",
+    icon: "🎮",
+    progress: 1,
+    maxProgress: 3,
+    claimed: false,
+  },
+  {
+    id: "task_aviator",
+    title: "Fly in Aviator Demo",
+    description: "Launch Aviator demo and achieve a multiplier of 2.0x or higher",
+    rewardType: "demo_cash",
+    rewardAmount: 50,
+    icon: "🚀",
+    progress: 0,
+    maxProgress: 1,
+    claimed: false,
+  },
+  {
+    id: "task_deposit_demo",
+    title: "Try Demo Wallet Top-up",
+    description: "Simulate a demo recharge in your wallet to earn 5 Free Spins on Money Coming",
+    rewardType: "free_spins",
+    rewardAmount: 5,
+    targetGameId: 3150051,
+    targetGameName: "Money Coming",
+    icon: "💳",
+    progress: 0,
+    maxProgress: 1,
+    claimed: false,
+  },
+];
+
+export const DEFAULT_GUEST_USER: UserProfile = {
+  id: "guest",
+  username: "Guest Player",
+  phone: "",
+  balance: 0,
+  vipLevel: 0,
+  avatar: "👤",
+  isLoggedIn: false,
+  earnedFreeSpins: {}, // Rule 13: Free spins are NOT default! They are empty until earned from tasks.
+  completedTasks: [],
+};
+
+export const INITIAL_TRANSACTIONS: WalletTransaction[] = [
+  {
+    id: "tx_welcome",
+    type: "task_reward",
+    amount: 111,
+    title: "New Member Starter Demo Bonus",
+    timestamp: "Just now",
+    status: "completed",
+  },
 ];

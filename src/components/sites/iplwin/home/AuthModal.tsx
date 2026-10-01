@@ -7,7 +7,7 @@ interface AuthModalProps {
   isOpen: boolean;
   initialMode: "login" | "register";
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (phone?: string, mode?: "login" | "register") => void;
 }
 
 export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
@@ -34,7 +34,7 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onSuccess();
+      onSuccess(phone, mode);
       onClose();
     }, 800);
   };

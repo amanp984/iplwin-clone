@@ -35,45 +35,45 @@ export function SiteFooter() {
           <div className="space-y-3 md:col-span-2">
             <BrandLogo />
             <p className="text-xs text-[#999999] leading-relaxed max-w-md pt-2">
-              IPLwin is the world’s leading online cricket exchange and entertainment betting platform. Offering 24/7 in-play cricket betting, live casino tables, Aviator mini games, and instant 3-minute deposits and withdrawals.
+              IPLwin is a premier online cricket sports exchange and entertainment gaming platform. Offering simulated in-play cricket odds, live casino showcases, Aviator mini games, and fast demo wallet management.
             </p>
             <div className="flex items-center gap-3 pt-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#1F1F1F] border border-[#333333] text-sm text-[#D1AE52]">
+              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#1F1F1F] border border-[#333333] text-sm text-[#D1AE52] font-black">
                 18+
               </span>
               <span className="text-[11px] text-[#A0A0A0]">
-                Strictly 18+. Responsible Gambling. Gambling can be addictive, please play responsibly.
+                Strictly 18+. Responsible Entertainment. Please play responsibly within your entertainment limits.
               </span>
             </div>
           </div>
 
-          {/* Col 2: Quick Links */}
+          {/* Col 2: Platform Links */}
           <div className="space-y-2">
             <h4 className="text-white font-bold uppercase tracking-wider text-xs mb-3">
               Platform Links
             </h4>
             <ul className="space-y-1.5 text-xs text-[#A0A0A0]">
-              <li><a href="#rules" className="hover:text-[#D1AE52] transition-colors">Betting Rules</a></li>
-              <li><a href="#promotions" className="hover:text-[#D1AE52] transition-colors">VIP Privileges</a></li>
-              <li><a href="#terms" className="hover:text-[#D1AE52] transition-colors">Terms & Conditions</a></li>
-              <li><a href="#privacy" className="hover:text-[#D1AE52] transition-colors">Privacy Policy</a></li>
-              <li><a href="#agents" className="hover:text-[#D1AE52] transition-colors">Affiliate Program</a></li>
+              <li><a href="#games-section" className="hover:text-[#D1AE52] transition-colors">Game Catalog</a></li>
+              <li><a href="#vip-showcase" className="hover:text-[#D1AE52] transition-colors">VIP Privileges</a></li>
+              <li><a href="#app-download" className="hover:text-[#D1AE52] transition-colors">Mobile Web App</a></li>
+              <li><span className="hover:text-[#D1AE52] transition-colors cursor-pointer" onClick={() => alert("Customer Support: Telegram @iplwin_official | 24/7 Live Assistance")}>24/7 Support Desk</span></li>
+              <li><span className="hover:text-[#D1AE52] transition-colors cursor-pointer" onClick={() => alert("Responsible Gaming Policy: Play for entertainment only.")}>Responsible Gaming</span></li>
             </ul>
           </div>
 
-          {/* Col 3: Regulatory & Security */}
+          {/* Col 3: Fair Play & Security */}
           <div className="space-y-2">
             <h4 className="text-white font-bold uppercase tracking-wider text-xs mb-3">
-              Security & License
+              Fair Play & Security
             </h4>
             <div className="space-y-2 text-[11px] text-[#999999]">
               <div className="p-2.5 rounded-lg bg-[#141414] border border-[#2A2A2A]">
-                <span className="font-bold text-white block mb-0.5">PAGCOR Licensed</span>
-                <span>Licensed and regulated under international iGaming jurisdiction standards.</span>
+                <span className="font-bold text-white block mb-0.5">Certified RNG Simulation</span>
+                <span>All platform game outcomes run on verified random number algorithms for unbiased results.</span>
               </div>
               <div className="p-2.5 rounded-lg bg-[#141414] border border-[#2A2A2A]">
-                <span className="font-bold text-white block mb-0.5">256-Bit SSL Encryption</span>
-                <span>All transactions and player data protected by enterprise TLS grade security.</span>
+                <span className="font-bold text-white block mb-0.5">TLS 256-Bit Encryption</span>
+                <span>All player sessions and demo transaction logs are encrypted using enterprise web security.</span>
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@ export function SiteFooter() {
         {/* Supported Payment Badges */}
         <div className="py-6 border-b border-[#222222]">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-3 text-center sm:text-left">
-            Fast Deposit & Withdrawal Methods
+            Simulated Fast Payment Gateways
           </h5>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             {paymentMethods.map((pm, i) => (
@@ -100,7 +100,7 @@ export function SiteFooter() {
         {/* Game Software Providers */}
         <div className="py-6 border-b border-[#222222]">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-3 text-center sm:text-left">
-            Certified Game Providers
+            Certified Game Engine Providers
           </h5>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             {providers.map((prov, i) => (
@@ -116,7 +116,7 @@ export function SiteFooter() {
 
         {/* Bottom copyright notice */}
         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-[#666666]">
-          <p>© 2026 IPLwin.in. All Rights Reserved. India&apos;s Biggest Betting Exchange.</p>
+          <p>© 2026 IPLwin. All Rights Reserved. Demo Entertainment & Gaming Experience.</p>
           <p>UTC +05:30 (Indian Standard Time)</p>
         </div>
       </div>
