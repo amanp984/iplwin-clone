@@ -34,7 +34,13 @@ export function GameGrid({
     }
 
     // Category filter
-    if (activeCategory !== "hot" && activeCategory !== "demo") {
+    if (activeCategory === "hot") {
+      if (activeProvider === "All" && !searchQuery.trim()) {
+        if (!game.tag || (game.tag !== "HOT" && game.tag !== "JACKPOT")) return false;
+      }
+    } else if (activeCategory === "demo") {
+      // All demo games supported
+    } else {
       if (game.category !== activeCategory) return false;
     }
 
@@ -97,6 +103,9 @@ export function GameGrid({
                     alt={game.name}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                     loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = "/images/games/game_placeholder.svg";
+                    }}
                   />
 
                   {/* Gradient bottom shadow inside card */}

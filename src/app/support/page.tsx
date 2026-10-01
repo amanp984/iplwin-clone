@@ -55,7 +55,7 @@ export default function SupportPage() {
     {
       category: "games",
       q: "Are the game outcomes fair and random?",
-      a: "Yes. All demo games utilize industry-standard cryptographic pseudorandom number algorithms (certified RNG) ensuring that slot reels, dice rolls, crash curves, and card deals are 100% unbiased and transparent.",
+      a: "Yes. All demo games utilize industry-standard cryptographic pseudorandom number algorithms (verified RNG simulation) ensuring that slot reels, dice rolls, crash curves, and card deals are 100% unbiased and transparent.",
     },
   ];
 

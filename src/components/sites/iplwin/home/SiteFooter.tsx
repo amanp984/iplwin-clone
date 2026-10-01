@@ -36,14 +36,14 @@ export function SiteFooter() {
           <div className="space-y-3 md:col-span-2">
             <BrandLogo />
             <p className="text-xs text-[#999999] leading-relaxed max-w-md pt-2">
-              IPLwin is a premier online cricket sports exchange and entertainment gaming platform. Offering simulated in-play cricket odds, live casino showcases, Aviator mini games, and fast demo wallet management.
+              IPLwin is a premier demo cricket sports exchange and entertainment gaming showcase platform. Offering simulated in-play cricket odds, live casino showcases, Aviator mini games, and interactive demo wallet management.
             </p>
             <div className="flex items-center gap-3 pt-2">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[#1F1F1F] border border-[#333333] text-sm text-[#D1AE52] font-black">
                 18+
               </span>
               <span className="text-[11px] text-[#A0A0A0]">
-                Strictly 18+. Responsible Entertainment. Please play responsibly within your entertainment limits.
+                Strictly 18+. Responsible Entertainment. Designed solely for demonstration and gaming simulation purposes.
               </span>
             </div>
           </div>
@@ -69,8 +69,8 @@ export function SiteFooter() {
             </h4>
             <div className="space-y-2 text-[11px] text-[#999999]">
               <div className="p-2.5 rounded-lg bg-[#141414] border border-[#2A2A2A]">
-                <span className="font-bold text-white block mb-0.5">Certified RNG Simulation</span>
-                <span>All platform game outcomes run on verified random number algorithms for unbiased results.</span>
+                <span className="font-bold text-white block mb-0.5">Fair RNG Simulation</span>
+                <span>All platform game outcomes run on unbiased random number algorithms for realistic demo results.</span>
               </div>
               <div className="p-2.5 rounded-lg bg-[#141414] border border-[#2A2A2A]">
                 <span className="font-bold text-white block mb-0.5">TLS 256-Bit Encryption</span>
@@ -101,7 +101,7 @@ export function SiteFooter() {
         {/* Game Software Providers */}
         <div className="py-6 border-b border-[#222222]">
           <h5 className="text-[11px] font-bold uppercase tracking-wider text-gray-400 mb-3 text-center sm:text-left">
-            Certified Game Engine Providers
+            Supported Game Engine Showcase
           </h5>
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             {providers.map((prov, i) => (

@@ -9,13 +9,13 @@ export function AppDownloadBanner() {
         {/* Left side description */}
         <div className="flex-1 text-center md:text-left">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#D1AE52]/20 border border-[#D1AE52]/40 text-[#D1AE52] text-xs font-bold uppercase tracking-wider mb-3">
-            <span>⚡ Native Fast App</span>
+            <span>⚡ Native Web App</span>
           </div>
           <h3 className="text-xl sm:text-2xl font-black text-white mb-2">
-            Download IPLwin Official Mobile App
+            Install IPLwin Demo Gaming App
           </h3>
           <p className="text-xs sm:text-sm text-[#A0A0A0] max-w-lg mb-6 leading-relaxed">
-            Experience ultra-smooth betting, live cricket match streaming in HD, instant deposits via UPI & 3-minute guaranteed withdrawals directly from your pocket.
+            Experience ultra-smooth demo gameplay, simulated match tracking, instant demo credit replenishment & responsive gaming controls directly from your home screen.
           </p>
 
           {/* Download buttons */}

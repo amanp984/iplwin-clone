@@ -160,7 +160,7 @@ export default function GamesPage() {
               <span>Complete Game Lobby</span>
             </h1>
             <p className="text-xs sm:text-sm text-gray-400 mt-1">
-              Browse 300+ certified live tables, slots, crash mini-games, and sports exchanges.
+              Explore all {GAMES.length} interactive tables, slots, crash mini-games, and sports matches with instant demo play.
             </p>
           </div>
 

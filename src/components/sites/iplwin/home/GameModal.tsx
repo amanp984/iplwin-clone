@@ -265,7 +265,14 @@ export function GameModal({
                 <div className="text-center max-w-sm">
                   <div className="w-20 h-20 mx-auto rounded-2xl overflow-hidden mb-4 border border-[#333333] shadow-lg">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={game.thumbnail} alt={game.name} className="w-full h-full object-cover" />
+                    <img
+                      src={game.thumbnail}
+                      alt={game.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = "/images/games/game_placeholder.svg";
+                      }}
+                    />
                   </div>
                   <h4 className="text-xl font-black text-white mb-1">{game.name}</h4>
                   <p className="text-xs text-gray-400 mb-6">
@@ -349,7 +356,14 @@ export function GameModal({
             <div className="relative z-10 text-center max-w-sm">
               <div className="w-24 h-24 mx-auto rounded-2xl overflow-hidden mb-4 border border-[#333333] shadow-lg">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={game.thumbnail} alt={game.name} className="w-full h-full object-cover" />
+                <img
+                  src={game.thumbnail}
+                  alt={game.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = "/images/games/game_placeholder.svg";
+                  }}
+                />
               </div>
               <h4 className="text-xl font-black text-white mb-1">{game.name}</h4>
               <p className="text-xs text-gray-400 mb-6">

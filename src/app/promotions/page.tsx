@@ -33,7 +33,7 @@ export default function PromotionsPage() {
       amount: "₹ 111 FREE",
       badge: "HOT BONUS",
       description: "Sign up today with an Indian mobile number and instantly receive ₹111 in demo entertainment credits.",
-      terms: "1x rollover requirement. Valid on all certified demo slots and table games.",
+      terms: "1x rollover requirement. Valid on all eligible demo slots and table games.",
       cta: "Claim ₹111 Now",
       gradient: "from-[#2A1005] via-[#1A0A02] to-[#121212]",
       accent: "#FF3D00",

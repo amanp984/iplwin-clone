@@ -1,20 +1,6 @@
 import { Game, GameCategory, BannerSlide, WinnerRecord, Notice, LanguageOption, TaskItem, UserProfile, WalletTransaction } from "@/types/site";
 import { GAME_ARTWORK_MAP } from "@/lib/gameArtwork";
 
-export const CATEGORIES: GameCategory[] = [
-  { id: "hot", name: "Hot", iconName: "HotIcon", count: 48, providers: ["All", "JILI", "Spribe", "PG Soft", "WG", "INOUT", "KingMidas"] },
-  { id: "sports", name: "Sports", iconName: "SportsIcon", count: 14, providers: ["All", "9Wickets", "SABA", "Lucky", "BTI", "Crown", "FB"] },
-  { id: "live", name: "Live Casino", iconName: "LiveCasinoIcon", count: 24, providers: ["All", "Evolution", "SEXY Live", "Ezugi", "WM", "DG", "Playtech"] },
-  { id: "minigames", name: "Mini Games", iconName: "MiniGameIcon", count: 32, providers: ["All", "Spribe", "INOUT", "WG", "JILI", "T1", "TURBO", "BGaming"] },
-  { id: "slot", name: "Slots", iconName: "SlotIcon", count: 120, providers: ["All", "JILI", "PG Soft", "JDB", "FC", "CQ9", "SmartSoft", "Hacksaw", "NolimitCity"] },
-  { id: "cards", name: "Cards", iconName: "CardsIcon", count: 18, providers: ["All", "JILI", "KingMidas", "WG", "Baison", "2J", "BGaming"] },
-  { id: "fishing", name: "Fishing", iconName: "FishingIcon", count: 16, providers: ["All", "JILI", "WG", "JDB", "Spade Gaming", "FC", "YellowBat"] },
-  { id: "cockfight", name: "Cock Fighting", iconName: "CockfightIcon", count: 4, providers: ["All", "SV388", "GA28"] },
-  { id: "esports", name: "E-Sports", iconName: "ESportsIcon", count: 6, providers: ["All", "DB E-Sports", "NEWBBIN", "IA"] },
-  { id: "lottery", name: "Lottery", iconName: "LotteryIcon", count: 8, providers: ["All", "TCG Lottery"] },
-  { id: "demo", name: "Demo", iconName: "DemoIcon", count: 15, providers: ["All", "JILI", "WG"] },
-];
-
 export const GAMES: Game[] = Object.values(GAME_ARTWORK_MAP).map((entry) => ({
   id: entry.id,
   name: entry.name,
@@ -27,6 +13,43 @@ export const GAMES: Game[] = Object.values(GAME_ARTWORK_MAP).map((entry) => ({
   supportsFreeSpins: entry.supportsFreeSpins,
   isMemberOnly: entry.isMemberOnly,
 }));
+
+export function getCategoryCount(catId: string): number {
+  if (catId === "hot") {
+    return GAMES.filter((g) => g.tag === "HOT" || g.tag === "JACKPOT").length;
+  }
+  if (catId === "demo") {
+    return GAMES.length;
+  }
+  return GAMES.filter((g) => g.category === catId).length;
+}
+
+export function getCategoryProviders(catId: string): string[] {
+  let relevantGames: Game[] = [];
+  if (catId === "hot") {
+    relevantGames = GAMES.filter((g) => g.tag === "HOT" || g.tag === "JACKPOT");
+  } else if (catId === "demo") {
+    relevantGames = GAMES;
+  } else {
+    relevantGames = GAMES.filter((g) => g.category === catId);
+  }
+  const provs = Array.from(new Set(relevantGames.map((g) => g.provider))).sort();
+  return ["All", ...provs];
+}
+
+export const CATEGORIES: GameCategory[] = [
+  { id: "hot", name: "Hot", iconName: "HotIcon", count: getCategoryCount("hot"), providers: getCategoryProviders("hot") },
+  { id: "sports", name: "Sports", iconName: "SportsIcon", count: getCategoryCount("sports"), providers: getCategoryProviders("sports") },
+  { id: "live", name: "Live Casino", iconName: "LiveCasinoIcon", count: getCategoryCount("live"), providers: getCategoryProviders("live") },
+  { id: "minigames", name: "Mini Games", iconName: "MiniGameIcon", count: getCategoryCount("minigames"), providers: getCategoryProviders("minigames") },
+  { id: "slot", name: "Slots", iconName: "SlotIcon", count: getCategoryCount("slot"), providers: getCategoryProviders("slot") },
+  { id: "cards", name: "Cards", iconName: "CardsIcon", count: getCategoryCount("cards"), providers: getCategoryProviders("cards") },
+  { id: "fishing", name: "Fishing", iconName: "FishingIcon", count: getCategoryCount("fishing"), providers: getCategoryProviders("fishing") },
+  { id: "cockfight", name: "Cock Fighting", iconName: "CockfightIcon", count: getCategoryCount("cockfight"), providers: getCategoryProviders("cockfight") },
+  { id: "esports", name: "E-Sports", iconName: "ESportsIcon", count: getCategoryCount("esports"), providers: getCategoryProviders("esports") },
+  { id: "lottery", name: "Lottery", iconName: "LotteryIcon", count: getCategoryCount("lottery"), providers: getCategoryProviders("lottery") },
+  { id: "demo", name: "Demo", iconName: "DemoIcon", count: getCategoryCount("demo"), providers: getCategoryProviders("demo") },
+];
 
 export const BANNERS: BannerSlide[] = [
   {

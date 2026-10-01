@@ -242,7 +242,7 @@ export function WalletModal({
                   <span className="text-white font-semibold">Demo Bank Account</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Processing Guarantee:</span>
+                  <span>Processing Speed (Demo):</span>
                   <span className="text-[#D1AE52] font-semibold">Instant in Demo Mode</span>
                 </div>
               </div>

@@ -9,18 +9,18 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "IPLwin : Cricket Online Betting Website",
+  title: "IPLwin : Premium Cricket & Casino Gaming Platform (Demo)",
   description:
-    "IPLwin - The world's favourite online sports betting company. Watch Live Sport and enjoy The most comprehensive In-Play service. IPLwin Bring you the safest and fastest gaming environment.",
-  keywords: "Sport, ICC, IPL, Match, Aviator, Rummy, T20, Cricket, Game",
-  authors: [{ name: "IPLwin" }],
+    "IPLwin — Premier demo gaming platform featuring cricket exchange, interactive slots, crash games, live tables, and daily rewards in a simulated entertainment environment.",
+  keywords: "IPLwin, Cricket Exchange, Aviator, Slots, Casino, Demo, Gaming, Simulated Games",
+  authors: [{ name: "IPLwin Gaming" }],
   icons: {
     icon: "/favicon.ico",
   },
   openGraph: {
-    title: "IPLwin : Cricket Online Betting Website",
+    title: "IPLwin : Premium Cricket & Casino Gaming Platform (Demo)",
     description:
-      "IPLwin - The world's favourite online sports betting company. Watch Live Sport and enjoy The most comprehensive In-Play service.",
+      "IPLwin — Premier demo gaming platform featuring cricket exchange, interactive slots, crash games, live tables, and daily rewards in a simulated entertainment environment.",
     type: "website",
     locale: "en_IN",
   },
@@ -41,7 +41,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased dark`}>
-      <body className="min-h-full flex flex-col bg-[#0A0A0A] text-white selection:bg-[#D1AE52] selection:text-black">
+      <body className="min-h-full flex flex-col bg-[#0A0A0A] text-white selection:bg-[#D1AE52] selection:text-black overflow-x-hidden">
         {children}
       </body>
     </html>

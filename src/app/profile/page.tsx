@@ -137,7 +137,7 @@ export default function ProfilePage() {
             <span>Earned Free Spin Inventory Breakdown</span>
           </h2>
           <p className="text-xs text-gray-400 mb-4">
-            Free spins can only be earned by completing active missions in the Tasks Hub and apply only to certified slots.
+            Free spins can only be earned by completing active missions in the Tasks Hub and apply only to eligible demo slots.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
