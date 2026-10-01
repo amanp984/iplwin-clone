@@ -55,26 +55,26 @@ export function QuickActionsBar({ onAction }: QuickActionsBarProps) {
   ];
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-3">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 py-2 sm:py-3">
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3">
         {actions.map((item) => (
           <button
             key={item.key}
             onClick={() => onAction(item.key)}
-            className={`group relative flex flex-col items-center justify-center p-3 rounded-xl bg-gradient-to-b ${item.gradient} bg-[#171717] border border-[#2D2D2D] hover:border-[#D1AE52]/60 hover:bg-[#1E1E1E] transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-sm`}
+            className={`group relative flex flex-col items-center justify-center p-2.5 sm:p-3 min-h-[78px] sm:min-h-[88px] rounded-xl sm:rounded-2xl bg-gradient-to-b ${item.gradient} bg-[#161616] border border-[#2B2B2B] hover:border-[#D1AE52]/70 hover:bg-[#1C1C1C] transition-all duration-200 transform hover:-translate-y-0.5 active:scale-[0.98] shadow-sm select-none`}
           >
             {item.badge && (
-              <span className="absolute -top-1.5 -right-1 px-1.5 py-0.2 rounded-full text-[9px] font-black bg-[#EA4E3D] text-white uppercase tracking-wider shadow">
+              <span className="absolute -top-1.5 -right-1 px-1.5 py-0.5 rounded-full text-[8px] sm:text-[9px] font-black bg-[#EA4E3D] text-white uppercase tracking-wider shadow-md">
                 {item.badge}
               </span>
             )}
-            <span className="text-2xl mb-1 group-hover:scale-110 transition-transform">
+            <span className="text-xl sm:text-2xl mb-1 group-hover:scale-110 transition-transform">
               {item.icon}
             </span>
-            <span className="text-xs font-bold text-white group-hover:text-[#D1AE52] transition-colors leading-tight">
+            <span className="text-[11px] sm:text-xs font-bold text-white group-hover:text-[#D1AE52] transition-colors leading-tight text-center">
               {item.title}
             </span>
-            <span className="text-[10px] text-[#A0A0A0] font-medium leading-tight mt-0.5">
+            <span className="text-[9px] sm:text-[10px] text-[#8E8E8E] font-medium leading-tight mt-0.5 text-center truncate w-full">
               {item.subtitle}
             </span>
           </button>

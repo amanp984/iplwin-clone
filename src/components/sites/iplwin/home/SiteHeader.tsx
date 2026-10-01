@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { BrandLogo, SearchIcon } from "../shared/icons";
 import { UserProfile } from "@/types/site";
 
@@ -29,10 +30,55 @@ export function SiteHeader({
 
   return (
     <header className="sticky top-0 z-50 w-full bg-[#141414]/95 backdrop-blur-md border-b border-[#2B2B2B] shadow-lg select-none">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-3">
-        {/* Left: Brand Logo */}
-        <div className="flex items-center gap-3">
-          <BrandLogo />
+      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2 sm:gap-4">
+        {/* Left: Brand Logo & Navigation */}
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <Link href="/" className="hover:opacity-90 transition-opacity">
+            <BrandLogo />
+          </Link>
+
+          {/* Desktop Nav Links */}
+          <nav className="hidden lg:flex items-center gap-1">
+            <Link
+              href="/"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors"
+            >
+              Lobby
+            </Link>
+            <Link
+              href="/games"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors"
+            >
+              Games
+            </Link>
+            <Link
+              href="/promotions"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors"
+            >
+              Promotions
+            </Link>
+            <Link
+              href="/rewards"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors flex items-center gap-1"
+            >
+              <span>Rewards</span>
+              <span className="px-1.5 py-0.2 rounded-full text-[9px] font-black bg-[#04BE02]/20 text-[#04BE02] border border-[#04BE02]/40">
+                SPINS
+              </span>
+            </Link>
+            <Link
+              href="/vip"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors"
+            >
+              VIP
+            </Link>
+            <Link
+              href="/support"
+              className="px-2.5 py-1 rounded-lg text-xs font-bold text-gray-300 hover:text-[#D1AE52] hover:bg-white/5 transition-colors"
+            >
+              Support
+            </Link>
+          </nav>
         </div>
 
         {/* Center: Search input (desktop) */}

@@ -9,6 +9,7 @@ interface GameGridProps {
   activeProvider: string;
   searchQuery: string;
   onLaunchGame: (game: Game, mode: "real" | "demo") => void;
+  onResetFilters?: () => void;
 }
 
 export function GameGrid({
@@ -16,6 +17,7 @@ export function GameGrid({
   activeProvider,
   searchQuery,
   onLaunchGame,
+  onResetFilters,
 }: GameGridProps) {
   const [hoveredId, setHoveredId] = useState<number | string | null>(null);
 
@@ -61,15 +63,20 @@ export function GameGrid({
       </div>
 
       {filteredGames.length === 0 ? (
-        <div className="w-full py-16 text-center bg-[#141414] rounded-2xl border border-[#2D2D2D]">
-          <p className="text-3xl mb-2">🔍</p>
-          <p className="text-sm text-gray-400">No games found matching your filters</p>
-          <button
-            onClick={() => {}}
-            className="mt-4 px-4 py-2 bg-[#D1AE52] text-black font-bold text-xs rounded-lg"
-          >
-            Reset Filters
-          </button>
+        <div className="w-full py-16 text-center bg-[#141414] rounded-2xl border border-[#2D2D2D] p-6 shadow-inner">
+          <p className="text-4xl mb-3">🔍</p>
+          <h3 className="text-base font-bold text-white mb-1">No Games Found</h3>
+          <p className="text-xs text-gray-400 max-w-sm mx-auto mb-5">
+            We couldn&apos;t find any games matching &quot;{searchQuery || activeCategory}&quot;. Try adjusting your search query or provider filter.
+          </p>
+          {onResetFilters && (
+            <button
+              onClick={onResetFilters}
+              className="px-5 py-2.5 bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-extrabold text-xs uppercase rounded-xl shadow-lg hover:brightness-105 active:scale-95 transition-all"
+            >
+              Reset All Filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">

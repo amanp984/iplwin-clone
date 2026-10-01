@@ -10,14 +10,8 @@ import {
 } from "@/components/sites/iplwin/home/data";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
-import { HeroBannerCarousel } from "@/components/sites/iplwin/home/HeroBannerCarousel";
-import { QuickActionsBar } from "@/components/sites/iplwin/home/QuickActionsBar";
-import { LiveJackpotBanner } from "@/components/sites/iplwin/home/LiveJackpotBanner";
-import { WinnersFeed } from "@/components/sites/iplwin/home/WinnersFeed";
 import { CategoryNav } from "@/components/sites/iplwin/home/CategoryNav";
 import { GameGrid } from "@/components/sites/iplwin/home/GameGrid";
-import { VIPPromoShowcase } from "@/components/sites/iplwin/home/VIPPromoShowcase";
-import { AppDownloadBanner } from "@/components/sites/iplwin/home/AppDownloadBanner";
 import { SiteFooter } from "@/components/sites/iplwin/home/SiteFooter";
 import { BottomNav } from "@/components/sites/iplwin/home/BottomNav";
 import { AuthModal } from "@/components/sites/iplwin/home/AuthModal";
@@ -27,15 +21,13 @@ import { RewardsTasksModal } from "@/components/sites/iplwin/home/RewardsTasksMo
 import { WalletModal } from "@/components/sites/iplwin/home/WalletModal";
 import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModal";
 
-export default function HomePage() {
-  // Navigation & Filtering
+export default function GamesPage() {
   const [activeCategory, setActiveCategory] = useState("hot");
   const [activeProvider, setActiveProvider] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLanguage, setActiveLanguage] = useState("en");
-  const [bottomNavTab, setBottomNavTab] = useState("home");
 
-  // User & Economy State (Simulated Demo Platform)
+  // User state
   const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
   const [tasks, setTasks] = useState<TaskItem[]>(INITIAL_TASKS);
   const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
@@ -51,7 +43,6 @@ export default function HomePage() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isTasksOpen, setIsTasksOpen] = useState(false);
 
-  // Auth Triggers
   const handleOpenAuth = (mode: "login" | "register") => {
     setAuthMode(mode);
     setIsAuthOpen(true);
@@ -60,38 +51,16 @@ export default function HomePage() {
   const handleAuthSuccess = (phone?: string, mode?: "login" | "register") => {
     const phoneNumber = phone || "9876543210";
     const bonus = mode === "register" ? 111 : 0;
-    const isNew = mode === "register";
-
     setUser((prev) => ({
       ...prev,
       isLoggedIn: true,
       phone: phoneNumber,
       username: `Player_${phoneNumber.slice(-4)}`,
       balance: prev.balance + bonus,
-      vipLevel: isNew ? 1 : Math.max(1, prev.vipLevel),
+      vipLevel: Math.max(1, prev.vipLevel),
     }));
-
-    if (bonus > 0) {
-      setTransactions((prev) => [
-        {
-          id: `tx_bonus_${Date.now()}`,
-          type: "task_reward",
-          amount: bonus,
-          title: "New Member Starter Demo Bonus",
-          timestamp: "Just now",
-          status: "completed",
-        },
-        ...prev,
-      ]);
-    }
   };
 
-  const handleLogout = () => {
-    setUser(DEFAULT_GUEST_USER);
-    setIsProfileOpen(false);
-  };
-
-  // Wallet Handlers
   const handleOpenWallet = (tab: "deposit" | "withdraw" | "history" = "deposit") => {
     if (!user.isLoggedIn) {
       handleOpenAuth("login");
@@ -101,70 +70,15 @@ export default function HomePage() {
     setIsWalletOpen(true);
   };
 
-  const handleDemoDeposit = (amount: number) => {
-    setUser((prev) => ({
-      ...prev,
-      balance: prev.balance + amount,
-    }));
-
-    setTransactions((prev) => [
-      {
-        id: `tx_dep_${Date.now()}`,
-        type: "deposit",
-        amount,
-        title: "Simulated Demo Deposit",
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-
-    // Advance task if applicable
-    setTasks((prev) =>
-      prev.map((t) => (t.id === "task_deposit_demo" ? { ...t, progress: 1 } : t))
-    );
-  };
-
-  const handleDemoWithdraw = (amount: number) => {
-    setUser((prev) => ({
-      ...prev,
-      balance: Math.max(0, prev.balance - amount),
-    }));
-
-    setTransactions((prev) => [
-      {
-        id: `tx_wd_${Date.now()}`,
-        type: "withdraw",
-        amount,
-        title: "Simulated Demo Withdrawal Request",
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-  };
-
-  // Game Launch Logic with Guest Enforcement (Rule 12)
   const handleLaunchGame = (game: Game, mode: "real" | "demo") => {
     if (game.isMemberOnly && !user.isLoggedIn) {
       handleOpenAuth("login");
       return;
     }
-
     setActiveGame(game);
     setGameMode(mode);
-
-    // Progress demo rounds task
-    setTasks((prev) =>
-      prev.map((t) =>
-        t.id === "task_play3" && t.progress < t.maxProgress
-          ? { ...t, progress: t.progress + 1 }
-          : t
-      )
-    );
   };
 
-  // Free Spin Consumption (Rule 13: strictly from earned rewards)
   const handleUseFreeSpin = (gameId: number | string) => {
     setUser((prev) => {
       const current = prev.earnedFreeSpins[gameId] || 0;
@@ -179,13 +93,11 @@ export default function HomePage() {
     });
   };
 
-  // Game Win Record
   const handleRecordWin = (amount: number, gameName: string) => {
     setUser((prev) => ({
       ...prev,
       balance: prev.balance + amount,
     }));
-
     setTransactions((prev) => [
       {
         id: `tx_win_${Date.now()}`,
@@ -199,7 +111,6 @@ export default function HomePage() {
     ]);
   };
 
-  // Claim Rewards/Tasks
   const handleClaimTask = (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
     if (!task || task.claimed || task.progress < task.maxProgress) return;
@@ -224,46 +135,10 @@ export default function HomePage() {
     setTasks((prev) =>
       prev.map((t) => (t.id === taskId ? { ...t, claimed: true } : t))
     );
-
-    setTransactions((prev) => [
-      {
-        id: `tx_task_${Date.now()}`,
-        type: "task_reward",
-        amount: task.rewardAmount,
-        title: `Claimed: ${task.title}`,
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-  };
-
-  // Quick Action triggers
-  const handleQuickAction = (key: string) => {
-    if (key === "deposit") {
-      handleOpenWallet("deposit");
-    } else if (key === "withdraw") {
-      handleOpenWallet("withdraw");
-    } else if (key === "vip") {
-      if (user.isLoggedIn) {
-        setIsProfileOpen(true);
-      } else {
-        const element = document.getElementById("vip-showcase");
-        if (element) element.scrollIntoView({ behavior: "smooth" });
-      }
-    } else if (key === "promo") {
-      setIsTasksOpen(true);
-    } else if (key === "download") {
-      const element = document.getElementById("app-download");
-      if (element) element.scrollIntoView({ behavior: "smooth" });
-    } else if (key === "support") {
-      alert("IPLwin 24/7 Live Customer Support is ready to assist you. Telegram: @iplwin_official");
-    }
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
-      {/* 1. Sticky Navigation Header */}
       <SiteHeader
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -275,103 +150,61 @@ export default function HomePage() {
         onOpenWallet={handleOpenWallet}
       />
 
-      {/* 2. Scrolling Notice Marquee */}
       <NoticeMarquee />
 
-      {/* Main Flow Content */}
-      <main className="flex-1 pb-16 md:pb-6">
-        {/* 3. Hero Promotional Banner Carousel */}
-        <HeroBannerCarousel
-          onBannerAction={() => {
-            if (!user.isLoggedIn) {
-              handleOpenAuth("register");
-            } else {
-              setIsTasksOpen(true);
-            }
-          }}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-6 pb-20 md:pb-10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-[#262626]">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-2">
+              <span className="text-2xl">🎮</span>
+              <span>Complete Game Lobby</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-gray-400 mt-1">
+              Browse 300+ certified live tables, slots, crash mini-games, and sports exchanges.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full bg-[#1A1A1A] border border-[#333333] text-xs font-semibold text-[#D1AE52]">
+              {GAMES.length} Interactive Titles
+            </span>
+          </div>
+        </div>
+
+        {/* Category & Provider Filter */}
+        <CategoryNav
+          activeCategory={activeCategory}
+          onSelectCategory={setActiveCategory}
+          activeProvider={activeProvider}
+          onSelectProvider={setActiveProvider}
         />
 
-        {/* 4. Quick Actions Bar */}
-        <QuickActionsBar onAction={handleQuickAction} />
-
-        {/* 5. Live Progressive Ticking Jackpot Pool */}
-        <LiveJackpotBanner />
-
-        {/* 6. Live Community Winners Stream */}
-        <WinnersFeed />
-
-        {/* 7. Category Navigation & Sub-provider Filters */}
-        <div id="games-section">
-          <CategoryNav
-            activeCategory={activeCategory}
-            onSelectCategory={setActiveCategory}
-            activeProvider={activeProvider}
-            onSelectProvider={setActiveProvider}
-          />
-
-          {/* 8. Games Grid with Interactive Hover Cards */}
-          <GameGrid
-            activeCategory={activeCategory}
-            activeProvider={activeProvider}
-            searchQuery={searchQuery}
-            onLaunchGame={handleLaunchGame}
-            onResetFilters={() => {
-              setSearchQuery("");
-              setActiveProvider("All");
-              setActiveCategory("hot");
-            }}
-          />
-        </div>
-
-        {/* 9. VIP Program & Bonus Promotion Showcase */}
-        <div id="vip-showcase">
-          <VIPPromoShowcase
-            onPromoClick={(title) => {
-              if (title.includes("Sign-up") && !user.isLoggedIn) {
-                handleOpenAuth("register");
-              } else if (title.includes("VIP")) {
-                if (user.isLoggedIn) {
-                  setIsProfileOpen(true);
-                } else {
-                  handleOpenAuth("login");
-                }
-              } else {
-                setIsTasksOpen(true);
-              }
-            }}
-          />
-        </div>
-
-        {/* 10. Native Mobile App Download Strip */}
-        <div id="app-download">
-          <AppDownloadBanner />
-        </div>
+        {/* Game Grid */}
+        <GameGrid
+          activeCategory={activeCategory}
+          activeProvider={activeProvider}
+          searchQuery={searchQuery}
+          onLaunchGame={handleLaunchGame}
+          onResetFilters={() => {
+            setSearchQuery("");
+            setActiveProvider("All");
+            setActiveCategory("hot");
+          }}
+        />
       </main>
 
-      {/* 11. Comprehensive Platform Footer */}
       <SiteFooter />
 
-      {/* 12. Mobile Bottom Navigation Bar */}
       <BottomNav
-        activeTab={bottomNavTab}
+        activeTab="home"
         isLoggedIn={user.isLoggedIn}
         onOpenProfile={() => setIsProfileOpen(true)}
-        onSelectTab={(tab) => {
-          setBottomNavTab(tab);
-          if (tab === "home") {
-            window.scrollTo({ top: 0, behavior: "smooth" });
-          } else if (tab === "discount") {
-            setIsTasksOpen(true);
-          } else if (tab === "vip") {
-            const el = document.getElementById("vip-showcase");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }
-        }}
+        onSelectTab={() => {}}
         onOpenAuth={handleOpenAuth}
         onOpenDeposit={() => handleOpenWallet("deposit")}
       />
 
-      {/* 13. Modals */}
+      {/* Modals */}
       <AuthModal
         isOpen={isAuthOpen}
         initialMode={authMode}
@@ -420,8 +253,12 @@ export default function HomePage() {
         onClose={() => setIsWalletOpen(false)}
         user={user}
         transactions={transactions}
-        onDemoDeposit={handleDemoDeposit}
-        onDemoWithdraw={handleDemoWithdraw}
+        onDemoDeposit={(amount) =>
+          setUser((prev) => ({ ...prev, balance: prev.balance + amount }))
+        }
+        onDemoWithdraw={(amount) =>
+          setUser((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) }))
+        }
       />
 
       <UserProfileModal
@@ -436,7 +273,10 @@ export default function HomePage() {
           setIsProfileOpen(false);
           setIsTasksOpen(true);
         }}
-        onLogout={handleLogout}
+        onLogout={() => {
+          setUser(DEFAULT_GUEST_USER);
+          setIsProfileOpen(false);
+        }}
       />
     </div>
   );

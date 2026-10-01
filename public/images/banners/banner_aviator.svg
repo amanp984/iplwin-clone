@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bbg-banner_aviator.svg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3D0E13"/>
+      <stop offset="100%" stop-color="#1A0507"/>
+    </linearGradient>
+    <filter id="bglow-banner_aviator.svg">
+      <feGaussianBlur stdDeviation="30" result="blur"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="480" fill="url(#bbg-banner_aviator.svg)" />
+  <circle cx="950" cy="240" r="220" fill="#E51937" opacity="0.18" filter="url(#bglow-banner_aviator.svg)" />
+
+  <!-- Diagonal dynamic lines -->
+  <g opacity="0.12" stroke="#FFFFFF" stroke-width="2">
+    <line x1="600" y1="0" x2="900" y2="480" />
+    <line x1="750" y1="0" x2="1050" y2="480" />
+    <line x1="900" y1="0" x2="1200" y2="480" />
+  </g>
+
+  <!-- Left Content Area -->
+  <g transform="translate(80, 140)">
+    <rect x="0" y="0" width="140" height="32" rx="16" fill="#141414" stroke="#E51937" stroke-width="1.5"/>
+    <text x="70" y="21" fill="#E51937" font-family="system-ui, sans-serif" font-weight="900" font-size="12" text-anchor="middle" letter-spacing="1">IPLWIN OFFICIAL</text>
+
+    <text x="0" y="80" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="900" font-size="44" letter-spacing="1">AVIATOR & CRASH</text>
+    <text x="0" y="140" fill="#E51937" font-family="system-ui, sans-serif" font-weight="900" font-size="52" letter-spacing="0">UP TO 100X MULTIPLIER</text>
+    <text x="0" y="180" fill="#D0D0D0" font-family="system-ui, sans-serif" font-weight="500" font-size="18">Live Crash Curves • Instant Cashout • Interactive Demo Mode</text>
+  </g>
+
+  <!-- Right Visual 3D Ring/Badge -->
+  <g transform="translate(950, 240)">
+    <circle cx="0" cy="0" r="130" fill="none" stroke="#E51937" stroke-width="3" stroke-dasharray="8,6" opacity="0.6"/>
+    <circle cx="0" cy="0" r="100" fill="#141414" stroke="#333333" stroke-width="3"/>
+    <text x="0" y="10" fill="#E51937" font-family="system-ui, sans-serif" font-weight="900" font-size="36" text-anchor="middle">IPLwin</text>
+    <text x="0" y="40" fill="#FFFFFF" font-family="system-ui, sans-serif" font-weight="700" font-size="14" text-anchor="middle">LIVE PLATFORM</text>
+  </g>
+</svg>

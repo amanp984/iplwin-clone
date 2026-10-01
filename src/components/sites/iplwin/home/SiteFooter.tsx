@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { BrandLogo } from "../shared/icons";
 
 export function SiteFooter() {
@@ -53,11 +54,11 @@ export function SiteFooter() {
               Platform Links
             </h4>
             <ul className="space-y-1.5 text-xs text-[#A0A0A0]">
-              <li><a href="#games-section" className="hover:text-[#D1AE52] transition-colors">Game Catalog</a></li>
-              <li><a href="#vip-showcase" className="hover:text-[#D1AE52] transition-colors">VIP Privileges</a></li>
-              <li><a href="#app-download" className="hover:text-[#D1AE52] transition-colors">Mobile Web App</a></li>
-              <li><span className="hover:text-[#D1AE52] transition-colors cursor-pointer" onClick={() => alert("Customer Support: Telegram @iplwin_official | 24/7 Live Assistance")}>24/7 Support Desk</span></li>
-              <li><span className="hover:text-[#D1AE52] transition-colors cursor-pointer" onClick={() => alert("Responsible Gaming Policy: Play for entertainment only.")}>Responsible Gaming</span></li>
+              <li><Link href="/games" className="hover:text-[#D1AE52] transition-colors">Game Catalog</Link></li>
+              <li><Link href="/vip" className="hover:text-[#D1AE52] transition-colors">VIP Privileges</Link></li>
+              <li><Link href="/promotions" className="hover:text-[#D1AE52] transition-colors">Promotions & Bonus</Link></li>
+              <li><Link href="/rewards" className="hover:text-[#D1AE52] transition-colors">Tasks & Rewards</Link></li>
+              <li><Link href="/support" className="hover:text-[#D1AE52] transition-colors">24/7 Help Desk & FAQ</Link></li>
             </ul>
           </div>
 

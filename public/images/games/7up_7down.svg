@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bg-3150124" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#351561" />
+      <stop offset="100%" stop-color="#1A0B2E" />
+    </radialGradient>
+    <linearGradient id="aviator-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E51937" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#E51937" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="glow-3150124" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="400" height="300" fill="url(#bg-3150124)" />
+
+  <!-- Ambient Glow -->
+  <circle cx="200" cy="120" r="110" fill="#00E5FF" opacity="0.12" filter="url(#glow-3150124)" />
+
+  <!-- Grid Tech Lines -->
+  <g opacity="0.08" stroke="#FFFFFF" stroke-width="1">
+    <line x1="0" y1="50" x2="400" y2="50" />
+    <line x1="0" y1="100" x2="400" y2="100" />
+    <line x1="0" y1="150" x2="400" y2="150" />
+    <line x1="0" y1="200" x2="400" y2="200" />
+    <line x1="100" y1="0" x2="100" y2="300" />
+    <line x1="200" y1="0" x2="200" y2="300" />
+    <line x1="300" y1="0" x2="300" y2="300" />
+  </g>
+
+  <!-- Game Vector Illustration -->
+  
+      <g transform="translate(200, 130)">
+        <!-- Dice 1 (Red) -->
+        <g transform="translate(-40, -10) rotate(-15)">
+          <rect x="-30" y="-30" width="60" height="60" rx="10" fill="#E51937" stroke="#FF8595" stroke-width="2"/>
+          <circle cx="-15" cy="-15" r="5" fill="#FFFFFF"/>
+          <circle cx="15" cy="-15" r="5" fill="#FFFFFF"/>
+          <circle cx="0" cy="0" r="5" fill="#FFFFFF"/>
+          <circle cx="-15" cy="15" r="5" fill="#FFFFFF"/>
+          <circle cx="15" cy="15" r="5" fill="#FFFFFF"/>
+        </g>
+        <!-- Dice 2 (Blue) -->
+        <g transform="translate(40, -15) rotate(15)">
+          <rect x="-30" y="-30" width="60" height="60" rx="10" fill="#0077FF" stroke="#85C2FF" stroke-width="2"/>
+          <circle cx="-15" cy="-15" r="5" fill="#FFFFFF"/>
+          <circle cx="15" cy="15" r="5" fill="#FFFFFF"/>
+        </g>
+        <!-- 7 Badge -->
+        <rect x="-45" y="32" width="90" height="28" rx="14" fill="#FFD700" stroke="#FFFFFF" stroke-width="1.5"/>
+        <text x="0" y="52" fill="#000000" font-family="Arial, sans-serif" font-weight="900" font-size="16" text-anchor="middle">LUCKY 7</text>
+      </g>
+    
+
+  <!-- Bottom Dark Gradient for Title Legibility -->
+  <rect y="210" width="400" height="90" fill="url(#bottom-fade)" />
+  <defs>
+    <linearGradient id="bottom-fade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="60%" stop-color="#050505" stop-opacity="0.85"/>
+      <stop offset="100%" stop-color="#0A0A0A" stop-opacity="0.98"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Provider Badge Top Left -->
+  <rect x="14" y="14" width="76" height="22" rx="11" fill="#141414" stroke="#333333" stroke-width="1"/>
+  <text x="52" y="29" fill="#D1AE52" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" text-anchor="middle" letter-spacing="1">JILI</text>
+
+  <!-- Game Title and Subtitle -->
+  <text x="20" y="260" fill="#FFFFFF" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="19" letter-spacing="0.5">7UP 7DOWN</text>
+  <text x="20" y="280" fill="#A0A0A0" font-family="system-ui, -apple-system, sans-serif" font-weight="600" font-size="11">High Roll Dice Action</text>
+
+  <!-- Border Accent -->
+  <rect x="0" y="0" width="400" height="300" fill="none" stroke="#2B2B2B" stroke-width="2" rx="1" />
+</svg>
