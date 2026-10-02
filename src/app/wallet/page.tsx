@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserProfile, WalletTransaction } from "@/types/site";
-import { DEFAULT_GUEST_USER, INITIAL_TRANSACTIONS } from "@/components/sites/iplwin/home/data";
+import { useDemo } from "@/lib/DemoContext";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
 import { SiteFooter } from "@/components/sites/iplwin/home/SiteFooter";
@@ -13,19 +12,34 @@ import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModa
 
 export default function WalletPage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
-  const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
-  const [activeTab, setActiveTab] = useState<"deposit" | "withdraw" | "history">("deposit");
+  const {
+    user,
+    transactions,
+    gameHistory,
+    isHydrated,
+    login,
+    logout,
+    deposit,
+    withdraw,
+    resetDemoAccount,
+  } = useDemo();
+
+  const [activeTab, setActiveTab] = useState<"deposit" | "withdraw" | "history" | "game_history">("deposit");
 
   // Deposit state
   const [depositAmount, setDepositAmount] = useState<number>(500);
   const [depositMethod, setDepositMethod] = useState("UPI Fast");
 
   // Withdraw state
-  const [withdrawAmount, setWithdrawAmount] = useState<number>(100);
+  const [withdrawAmount, setWithdrawAmount] = useState<number>(500);
   const [accountNumber, setAccountNumber] = useState("");
   const [ifsc, setIfsc] = useState("");
   const [withdrawError, setWithdrawError] = useState("");
+  const [isProcessingWd, setIsProcessingWd] = useState(false);
+
+  // History filtering
+  const [searchLedger, setSearchLedger] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
 
   const [feedback, setFeedback] = useState("");
 
@@ -37,26 +51,11 @@ export default function WalletPage() {
   const handleDepositSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (depositAmount <= 0) return;
-
-    setUser((prev) => ({
-      ...prev,
-      balance: prev.balance + depositAmount,
-    }));
-
-    setTransactions((prev) => [
-      {
-        id: `tx_dep_${Date.now()}`,
-        type: "deposit",
-        amount: depositAmount,
-        title: `Simulated Demo Deposit via ${depositMethod}`,
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-
-    setFeedback(`🎉 Successfully added ₹${depositAmount.toLocaleString()} simulated demo credits!`);
-    setTimeout(() => setFeedback(""), 4000);
+    const ok = deposit(depositAmount, depositMethod);
+    if (ok) {
+      setFeedback(`🎉 Successfully added ₹${depositAmount.toLocaleString()} simulated demo credits via ${depositMethod}!`);
+      setTimeout(() => setFeedback(""), 4000);
+    }
   };
 
   const handleWithdrawSubmit = (e: React.FormEvent) => {
@@ -69,28 +68,51 @@ export default function WalletPage() {
       setWithdrawError("Insufficient demo balance");
       return;
     }
+    if (!accountNumber || accountNumber.trim().length < 4) {
+      setWithdrawError("Please enter simulated account or UPI ID");
+      return;
+    }
 
     setWithdrawError("");
-    setUser((prev) => ({
-      ...prev,
-      balance: prev.balance - withdrawAmount,
-    }));
+    setIsProcessingWd(true);
 
-    setTransactions((prev) => [
-      {
-        id: `tx_wd_${Date.now()}`,
-        type: "withdraw",
-        amount: withdrawAmount,
-        title: "Simulated Demo Payout Request",
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-
-    setFeedback(`✅ Simulated payout request for ₹${withdrawAmount.toLocaleString()} recorded in demo ledger.`);
-    setTimeout(() => setFeedback(""), 4000);
+    setTimeout(() => {
+      const res = withdraw(withdrawAmount, accountNumber, ifsc || "DEMOBANK01");
+      setIsProcessingWd(false);
+      if (res.success) {
+        setFeedback(`✅ Simulated payout request for ₹${withdrawAmount.toLocaleString()} recorded in demo ledger.`);
+        setAccountNumber("");
+        setIfsc("");
+        setTimeout(() => setFeedback(""), 4000);
+      } else {
+        setWithdrawError(res.error || "Simulated withdrawal failed.");
+      }
+    }, 600);
   };
+
+  const filteredTransactions = transactions.filter((tx) => {
+    if (filterType !== "all" && tx.type !== filterType) return false;
+    if (searchLedger) {
+      const q = searchLedger.toLowerCase();
+      return (
+        tx.title.toLowerCase().includes(q) ||
+        tx.id.toLowerCase().includes(q) ||
+        tx.type.toLowerCase().includes(q)
+      );
+    }
+    return true;
+  });
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-[#D1AE52] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-gray-400 font-mono tracking-wider uppercase">Loading Demo Wallet...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
@@ -122,10 +144,10 @@ export default function WalletPage() {
           <span className="text-xl">⚠️</span>
           <div>
             <h3 className="text-xs font-bold text-[#E9CA78] uppercase tracking-wider">
-              Simulated Demo Entertainment Mode
+              Simulated Demo Entertainment Mode (Strictly No Real Financials)
             </h3>
             <p className="text-[11px] text-gray-400 mt-0.5 leading-relaxed">
-              This wallet operates exclusively in simulation demo mode. All deposits, balances, and payouts are virtual demo credits designed for entertainment and game mechanic testing. No real financial currency is processed.
+              This wallet operates exclusively in simulation demo mode. All deposits, balances, and simulated withdrawals are virtual demo credits designed for entertainment and game mechanic testing. No real banking rails or real funds are transferred.
             </p>
           </div>
         </div>
@@ -170,10 +192,10 @@ export default function WalletPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex bg-[#141414] p-1.5 rounded-2xl border border-[#2B2B2B] mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-4 bg-[#141414] p-1.5 rounded-2xl border border-[#2B2B2B] mb-6 gap-1">
           <button
             onClick={() => setActiveTab("deposit")}
-            className={`flex-1 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+            className={`py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
               activeTab === "deposit" ? "bg-[#242424] text-white shadow" : "text-gray-400 hover:text-white"
             }`}
           >
@@ -181,7 +203,7 @@ export default function WalletPage() {
           </button>
           <button
             onClick={() => setActiveTab("withdraw")}
-            className={`flex-1 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+            className={`py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
               activeTab === "withdraw" ? "bg-[#242424] text-white shadow" : "text-gray-400 hover:text-white"
             }`}
           >
@@ -189,11 +211,19 @@ export default function WalletPage() {
           </button>
           <button
             onClick={() => setActiveTab("history")}
-            className={`flex-1 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+            className={`py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
               activeTab === "history" ? "bg-[#242424] text-white shadow" : "text-gray-400 hover:text-white"
             }`}
           >
-            📋 Ledger & History ({transactions.length})
+            📋 Ledger ({transactions.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("game_history")}
+            className={`py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+              activeTab === "game_history" ? "bg-[#242424] text-white shadow" : "text-gray-400 hover:text-white"
+            }`}
+          >
+            🎮 Game History ({gameHistory.length})
           </button>
         </div>
 
@@ -268,7 +298,7 @@ export default function WalletPage() {
           <div className="p-6 rounded-3xl bg-[#141414] border border-[#2B2B2B] shadow-xl">
             <h2 className="text-base font-bold text-white mb-2">Simulate Demo Withdrawal Request</h2>
             <p className="text-xs text-gray-400 mb-6">
-              Test the simulated withdrawal flow. Virtual funds will be deducted from your demo balance.
+              Test the simulated withdrawal flow. Virtual funds will be deducted from your demo balance and logged to the ledger.
             </p>
 
             <form onSubmit={handleWithdrawSubmit} className="space-y-4">
@@ -305,7 +335,7 @@ export default function WalletPage() {
                     type="text"
                     value={ifsc}
                     onChange={(e) => setIfsc(e.target.value)}
-                    placeholder="HDFC0001234"
+                    placeholder="DEMO0001234"
                     className="w-full bg-[#0E0E0E] text-white px-4 py-3 rounded-xl border border-[#333333] focus:border-[#D1AE52] focus:outline-none text-xs"
                   />
                 </div>
@@ -317,9 +347,10 @@ export default function WalletPage() {
 
               <button
                 type="submit"
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-black text-sm uppercase shadow-xl hover:brightness-105 active:scale-[0.99] transition-all"
+                disabled={isProcessingWd}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-black text-sm uppercase shadow-xl hover:brightness-105 active:scale-[0.99] transition-all disabled:opacity-50"
               >
-                Submit Demo Payout Request
+                {isProcessingWd ? "Processing Simulated Payout..." : `Submit Demo Payout Request (₹${withdrawAmount.toLocaleString()})`}
               </button>
             </form>
           </div>
@@ -328,42 +359,148 @@ export default function WalletPage() {
         {/* Tab 3: History */}
         {activeTab === "history" && (
           <div className="p-6 rounded-3xl bg-[#141414] border border-[#2B2B2B] shadow-xl">
-            <h2 className="text-base font-bold text-white mb-2">Simulated Transaction Ledger</h2>
-            <p className="text-xs text-gray-400 mb-6">
-              Complete chronological audit trail of all demo deposits, withdrawals, and game wins.
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-base font-bold text-white">Simulated Transaction Ledger</h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  Complete chronological audit trail of all demo deposits, withdrawals, and game wins.
+                </p>
+              </div>
 
-            <div className="space-y-3">
-              {transactions.map((tx) => (
-                <div
-                  key={tx.id}
-                  className="p-4 rounded-xl bg-[#0E0E0E] border border-[#262626] flex items-center justify-between"
+              {/* Filters */}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Search ledger..."
+                  value={searchLedger}
+                  onChange={(e) => setSearchLedger(e.target.value)}
+                  className="bg-[#0E0E0E] border border-[#333333] text-xs px-3 py-1.5 rounded-xl text-white focus:outline-none focus:border-[#D1AE52]"
+                />
+                <select
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="bg-[#0E0E0E] border border-[#333333] text-xs px-2.5 py-1.5 rounded-xl text-gray-300 focus:outline-none"
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xl p-2 rounded-lg bg-[#1A1A1A]">
-                      {tx.type === "deposit" ? "💳" : tx.type === "withdraw" ? "⚡" : "🎁"}
-                    </span>
-                    <div>
-                      <h4 className="text-xs font-bold text-white">{tx.title}</h4>
-                      <span className="text-[10px] text-gray-500 font-mono">{tx.timestamp}</span>
+                  <option value="all">All Types</option>
+                  <option value="deposit">Deposits</option>
+                  <option value="withdraw">Withdrawals</option>
+                  <option value="bet">Stakes</option>
+                  <option value="win">Wins</option>
+                  <option value="task_reward">Rewards</option>
+                  <option value="bonus">Bonuses</option>
+                </select>
+              </div>
+            </div>
+
+            {filteredTransactions.length === 0 ? (
+              <div className="p-8 text-center bg-[#0E0E0E] rounded-2xl border border-[#222222]">
+                <p className="text-xs text-gray-400">No transactions match your search or filter.</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredTransactions.map((tx) => (
+                  <div
+                    key={tx.id}
+                    className="p-4 rounded-xl bg-[#0E0E0E] border border-[#262626] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl p-2 rounded-lg bg-[#1A1A1A]">
+                        {tx.type === "deposit"
+                          ? "💳"
+                          : tx.type === "withdraw"
+                          ? "⚡"
+                          : tx.type === "bet"
+                          ? "🎲"
+                          : tx.type === "win"
+                          ? "🏆"
+                          : "🎁"}
+                      </span>
+                      <div>
+                        <h4 className="text-xs font-bold text-white">{tx.title}</h4>
+                        <span className="text-[10px] text-gray-500 font-mono">
+                          {tx.timestamp} • {tx.id.slice(-8)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span
+                        className={`text-sm font-mono font-black ${
+                          tx.type === "deposit" || tx.type === "task_reward" || tx.type === "win" || tx.type === "bonus"
+                            ? "text-[#04BE02]"
+                            : "text-[#EA4E3D]"
+                        }`}
+                      >
+                        {tx.type === "withdraw" || tx.type === "bet" ? "-" : "+"}₹{tx.amount.toLocaleString()}
+                      </span>
+                      <span className="text-[9px] text-gray-500 block uppercase">{tx.status}</span>
                     </div>
                   </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-                  <div className="text-right">
-                    <span
-                      className={`text-sm font-mono font-black ${
-                        tx.type === "deposit" || tx.type === "task_reward" || tx.type === "win"
-                          ? "text-[#04BE02]"
-                          : "text-[#EA4E3D]"
-                      }`}
-                    >
-                      {tx.type === "withdraw" ? "-" : "+"}₹{tx.amount.toLocaleString()}
-                    </span>
-                    <span className="text-[9px] text-gray-500 block uppercase">{tx.status}</span>
+        {/* Tab 4: Game History */}
+        {activeTab === "game_history" && (
+          <div className="p-6 rounded-3xl bg-[#141414] border border-[#2B2B2B] shadow-xl">
+            <h2 className="text-base font-bold text-white mb-2">Simulated Game Rounds History</h2>
+            <p className="text-xs text-gray-400 mb-6">
+              Real-time audit trail of games played in this browser session. Only actual player rounds are recorded.
+            </p>
+
+            {gameHistory.length === 0 ? (
+              <div className="p-8 text-center bg-[#0E0E0E] rounded-2xl border border-[#222222]">
+                <span className="text-3xl block mb-2">🎮</span>
+                <p className="text-xs text-gray-400">No game rounds played yet.</p>
+                <p className="text-[11px] text-gray-500 mt-1">Play any of the 36 demo games to see round records here!</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {gameHistory.map((g) => (
+                  <div
+                    key={g.roundId || g.id}
+                    className="p-4 rounded-xl bg-[#0E0E0E] border border-[#262626] flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl p-2 rounded-lg bg-[#1A1A1A]">
+                        {g.result === "win" ? "🏆" : "🎲"}
+                      </span>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-xs font-bold text-white">{g.gameName}</h4>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#202020] text-gray-400 font-mono">
+                            {g.provider}
+                          </span>
+                          {g.multiplier && (
+                            <span className="text-[10px] text-[#D1AE52] font-mono font-bold">
+                              {g.multiplier.toFixed(2)}x
+                            </span>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-gray-500 font-mono">
+                          {g.timestamp} • Round {g.roundId.slice(-8)}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <span
+                        className={`text-sm font-mono font-black ${
+                          g.result === "win" ? "text-[#04BE02]" : "text-[#EA4E3D]"
+                        }`}
+                      >
+                        {g.result === "win" ? `+₹${(g.payout || g.win || 0).toLocaleString()}` : `-₹${g.stake.toLocaleString()}`}
+                      </span>
+                      <span className="text-[10px] text-gray-500 block font-mono">
+                        Bal: ₹{g.balanceAfter.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>
@@ -387,16 +524,7 @@ export default function WalletPage() {
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(phone, mode) => {
-          const phoneNumber = phone || "9876543210";
-          const bonus = mode === "register" ? 111 : 0;
-          setUser((prev) => ({
-            ...prev,
-            isLoggedIn: true,
-            phone: phoneNumber,
-            username: `Player_${phoneNumber.slice(-4)}`,
-            balance: prev.balance + bonus,
-            vipLevel: Math.max(1, prev.vipLevel),
-          }));
+          login(phone || "9876543210", mode);
         }}
       />
 
@@ -411,10 +539,8 @@ export default function WalletPage() {
         onOpenTasks={() => {
           router.push("/rewards");
         }}
-        onLogout={() => {
-          setUser(DEFAULT_GUEST_USER);
-          setIsProfileOpen(false);
-        }}
+        onLogout={logout}
+        onResetDemo={resetDemoAccount}
       />
     </div>
   );

@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { UserProfile, WalletTransaction } from "@/types/site";
-import { DEFAULT_GUEST_USER, INITIAL_TRANSACTIONS } from "@/components/sites/iplwin/home/data";
+import { useDemo } from "@/lib/DemoContext";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
 import { SiteFooter } from "@/components/sites/iplwin/home/SiteFooter";
@@ -15,13 +14,22 @@ import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModa
 
 export default function VIPPage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
-  const [transactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
+  const {
+    user,
+    transactions,
+    gameHistory,
+    isHydrated,
+    login,
+    logout,
+    deposit,
+    withdraw,
+    resetDemoAccount,
+  } = useDemo();
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
-  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history">("deposit");
+  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history" | "game_history">("deposit");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const vipTiers = [
@@ -32,6 +40,17 @@ export default function VIPPage() {
     { level: 5, name: "Diamond High Roller", exp: "₹ 500,000", upgradeGift: "₹ 3,888", monthlyBonus: "₹ 8,888", birthdayGift: "₹ 12,888", cashback: "1.3%" },
     { level: 6, name: "Legendary Royal", exp: "₹ 2,000,000", upgradeGift: "₹ 18,888", monthlyBonus: "₹ 38,888", birthdayGift: "₹ 58,888", cashback: "1.5%" },
   ];
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-[#D1AE52] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-gray-400 font-mono tracking-wider uppercase">Loading VIP Hub...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
@@ -70,7 +89,7 @@ export default function VIPPage() {
               Exclusive High Roller Club
             </h1>
             <p className="text-xs sm:text-sm text-gray-300 leading-relaxed">
-              Every simulated round and wager earns tier experience points. Upgrade your tier to unlock permanent monthly allowances, birthday gifts, and dedicated VIP support privileges.
+              Every simulated round and wager earns tier experience points. Upgrade your tier to unlock permanent monthly allowances, birthday gifts, and dedicated VIP support privileges in demo mode.
             </p>
           </div>
         </div>
@@ -91,7 +110,7 @@ export default function VIPPage() {
                 </span>
               </div>
               <p className="text-xs text-gray-400 mt-0.5">
-                Current simulated demo balance: ₹{user.balance.toLocaleString()}
+                Current simulated demo balance: ₹{user.balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} • Demo EXP: {user.vipPoints || 0} pts
               </p>
             </div>
           </div>
@@ -142,19 +161,27 @@ export default function VIPPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#202020] text-gray-300">
-                {vipTiers.map((tier) => (
-                  <tr key={tier.level} className="hover:bg-[#1A1A1A] transition-colors">
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#D1AE52]">
-                      VIP {tier.level}
-                    </td>
-                    <td className="py-3.5 px-4 font-bold text-white">{tier.name}</td>
-                    <td className="py-3.5 px-4 font-mono">{tier.exp}</td>
-                    <td className="py-3.5 px-4 font-mono text-[#04BE02] font-semibold">{tier.upgradeGift}</td>
-                    <td className="py-3.5 px-4 font-mono">{tier.monthlyBonus}</td>
-                    <td className="py-3.5 px-4 font-mono">{tier.birthdayGift}</td>
-                    <td className="py-3.5 px-4 font-mono font-bold text-[#D1AE52]">{tier.cashback}</td>
-                  </tr>
-                ))}
+                {vipTiers.map((tier) => {
+                  const isCurrent = (user.vipLevel || 0) === tier.level;
+                  return (
+                    <tr
+                      key={tier.level}
+                      className={`hover:bg-[#1A1A1A] transition-colors ${
+                        isCurrent ? "bg-[#251F0D] border-l-2 border-[#D1AE52]" : ""
+                      }`}
+                    >
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#D1AE52]">
+                        VIP {tier.level} {isCurrent && "(Current)"}
+                      </td>
+                      <td className="py-3.5 px-4 font-bold text-white">{tier.name}</td>
+                      <td className="py-3.5 px-4 font-mono">{tier.exp}</td>
+                      <td className="py-3.5 px-4 font-mono text-[#04BE02] font-semibold">{tier.upgradeGift}</td>
+                      <td className="py-3.5 px-4 font-mono">{tier.monthlyBonus}</td>
+                      <td className="py-3.5 px-4 font-mono">{tier.birthdayGift}</td>
+                      <td className="py-3.5 px-4 font-mono font-bold text-[#D1AE52]">{tier.cashback}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -188,16 +215,7 @@ export default function VIPPage() {
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(phone, mode) => {
-          const phoneNumber = phone || "9876543210";
-          const bonus = mode === "register" ? 111 : 0;
-          setUser((prev) => ({
-            ...prev,
-            isLoggedIn: true,
-            phone: phoneNumber,
-            username: `Player_${phoneNumber.slice(-4)}`,
-            balance: prev.balance + bonus,
-            vipLevel: Math.max(1, prev.vipLevel),
-          }));
+          login(phone || "9876543210", mode);
         }}
       />
 
@@ -207,12 +225,9 @@ export default function VIPPage() {
         onClose={() => setIsWalletOpen(false)}
         user={user}
         transactions={transactions}
-        onDemoDeposit={(amount) =>
-          setUser((prev) => ({ ...prev, balance: prev.balance + amount }))
-        }
-        onDemoWithdraw={(amount) =>
-          setUser((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) }))
-        }
+        gameHistory={gameHistory}
+        onDemoDeposit={(amount) => deposit(amount)}
+        onDemoWithdraw={(amount, account, ifsc) => withdraw(amount, account, ifsc)}
       />
 
       <UserProfileModal
@@ -227,10 +242,8 @@ export default function VIPPage() {
         onOpenTasks={() => {
           router.push("/rewards");
         }}
-        onLogout={() => {
-          setUser(DEFAULT_GUEST_USER);
-          setIsProfileOpen(false);
-        }}
+        onLogout={logout}
+        onResetDemo={resetDemoAccount}
       />
     </div>
   );

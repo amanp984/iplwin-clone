@@ -3,16 +3,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Game, UserProfile } from "@/types/site";
 import { CloseIcon, CrownIcon } from "../shared/icons";
+import { useDemo, PlayRoundParams } from "@/lib/DemoContext";
 
 interface GameModalProps {
   isOpen: boolean;
   game: Game | null;
   mode: "real" | "demo";
-  user: UserProfile;
+  user?: UserProfile;
   onClose: () => void;
-  onUpdateBalance: (newBalance: number) => void;
-  onUseFreeSpin: (gameId: number | string) => void;
-  onRecordWin: (amount: number, gameName: string) => void;
+  onUpdateBalance?: (newBalance: number) => void;
+  onUseFreeSpin?: (gameId: number | string) => void;
+  onRecordWin?: (amount: number, gameName: string) => void;
+  onPlayRound?: (params: PlayRoundParams) => unknown;
 }
 
 const SLOT_SYMBOLS = ["💎", "👑", "7️⃣", "⭐", "🔔", "💰", "🍒"];
@@ -24,26 +26,30 @@ export function GameModal({
   user,
   onClose,
   onUpdateBalance,
-  onUseFreeSpin,
-  onRecordWin,
 }: GameModalProps) {
+  const { user: ctxUser, playRound, notify } = useDemo();
+  const activeUser = user || ctxUser;
+
   // Aviator / Crash state
   const [multiplier, setMultiplier] = useState(1.0);
   const [crashState, setCrashState] = useState<"betting" | "flying" | "crashed">("betting");
   const [hasCashedOut, setHasCashedOut] = useState(false);
   const [aviatorWin, setAviatorWin] = useState(0);
 
-  // Slot machine state (for Slots like Fortune Gems 3, Super Ace, Money Coming)
+  // Slot machine state
   const [reels, setReels] = useState(["💎", "👑", "7️⃣"]);
   const [isSpinning, setIsSpinning] = useState(false);
   const [slotWinMessage, setSlotWinMessage] = useState("");
+
+  // Card & table state
+  const [isDealing, setIsDealing] = useState(false);
 
   // Common bet state
   const [betAmount, setBetAmount] = useState(10);
   const [feedbackMsg, setFeedbackMsg] = useState("");
 
   // Earned Free Spins check (Rule 13: only if user actually earned them from Tasks/Rewards!)
-  const availableFreeSpins = game ? (user.earnedFreeSpins[game.id] || 0) : 0;
+  const availableFreeSpins = game ? (activeUser.earnedFreeSpins[String(game.id)] || 0) : 0;
 
   // Reset states when a new game opens
   useEffect(() => {
@@ -53,6 +59,7 @@ export function GameModal({
       setHasCashedOut(false);
       setAviatorWin(0);
       setIsSpinning(false);
+      setIsDealing(false);
       setSlotWinMessage("");
       setFeedbackMsg("");
     }
@@ -61,7 +68,7 @@ export function GameModal({
   // Aviator loop
   useEffect(() => {
     if (!isOpen || !game) return;
-    if (game.category !== "minigames" && game.name !== "Aviator") return;
+    if (game.category !== "minigames" && !game.name.includes("Aviator")) return;
 
     let interval: NodeJS.Timeout;
     if (crashState === "flying") {
@@ -82,11 +89,27 @@ export function GameModal({
 
   // Handle Aviator Start
   const handleAviatorStart = () => {
-    if (user.balance < betAmount) {
+    if (!game) return;
+    if (activeUser.balance < betAmount) {
       setFeedbackMsg("Insufficient balance for this round.");
+      notify("warning", "Insufficient demo balance. Top-up in Demo Wallet.", "Demo Balance");
       return;
     }
-    onUpdateBalance(user.balance - betAmount);
+
+    const res = playRound({
+      game,
+      stake: betAmount,
+      payout: 0,
+      result: "loss",
+      isFreeSpin: false,
+      details: "Aviator takeoff stake",
+    });
+
+    if (!res.success) return;
+    if (onUpdateBalance && res.balanceAfter !== undefined) {
+      onUpdateBalance(res.balanceAfter);
+    }
+
     setMultiplier(1.0);
     setHasCashedOut(false);
     setAviatorWin(0);
@@ -96,26 +119,36 @@ export function GameModal({
 
   // Handle Aviator Cash Out
   const handleAviatorCashOut = () => {
-    if (crashState !== "flying" || hasCashedOut) return;
+    if (crashState !== "flying" || hasCashedOut || !game) return;
+    setHasCashedOut(true);
     const won = +(betAmount * multiplier).toFixed(2);
     setAviatorWin(won);
-    onUpdateBalance(user.balance + won);
-    onRecordWin(won, game?.name || "Aviator");
-    setHasCashedOut(true);
+
+    const res = playRound({
+      game,
+      stake: 0,
+      payout: won,
+      result: "win",
+      isFreeSpin: false,
+      details: `Cashed out at ${multiplier}x (+₹${won.toLocaleString()})`,
+    });
+
+    if (onUpdateBalance && res.balanceAfter !== undefined) {
+      onUpdateBalance(res.balanceAfter);
+    }
   };
 
   // Handle Slot Spin
   const handleSlotSpin = useCallback((isFree: boolean) => {
-    if (isSpinning) return;
-    if (!isFree && user.balance < betAmount) {
+    if (isSpinning || !game) return;
+    if (!isFree && activeUser.balance < betAmount) {
       setFeedbackMsg("Insufficient balance. Top-up in Demo Wallet.");
+      notify("warning", "Insufficient demo balance.", "Top-up Required");
       return;
     }
-
-    if (isFree) {
-      if (game) onUseFreeSpin(game.id);
-    } else {
-      onUpdateBalance(user.balance - betAmount);
+    if (isFree && (activeUser.earnedFreeSpins[String(game.id)] || 0) <= 0) {
+      setFeedbackMsg("No free spins remaining for this game.");
+      return;
     }
 
     setIsSpinning(true);
@@ -139,7 +172,7 @@ export function GameModal({
           SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)],
         ];
 
-        // If free spin, give a high chance of matching!
+        // If free spin, give a favorable chance of matching
         if (isFree && Math.random() < 0.75) {
           const lucky = SLOT_SYMBOLS[Math.floor(Math.random() * 3)];
           finalReels[0] = lucky;
@@ -150,23 +183,66 @@ export function GameModal({
         setReels(finalReels);
         setIsSpinning(false);
 
-        // Win calculation
+        let win = 0;
+        let details = `Spun ${finalReels.join(" ")}`;
         if (finalReels[0] === finalReels[1] && finalReels[1] === finalReels[2]) {
-          const win = isFree ? betAmount * 10 : betAmount * 5;
+          win = isFree ? betAmount * 10 : betAmount * 5;
+          details = `🎉 3x Matching ${finalReels[0]} (+₹${win})`;
           setSlotWinMessage(`🎉 BIG WIN! 3x Matching ${finalReels[0]} +₹${win}!`);
-          onUpdateBalance(user.balance + win);
-          onRecordWin(win, game?.name || "Slot");
         } else if (finalReels[0] === finalReels[1] || finalReels[1] === finalReels[2]) {
-          const win = isFree ? betAmount * 2 : betAmount * 1.5;
+          win = isFree ? betAmount * 2 : betAmount * 1.5;
+          details = `⭐ Match 2 Symbols (+₹${win})`;
           setSlotWinMessage(`⭐ Match 2! Won +₹${win}!`);
-          onUpdateBalance(user.balance + win);
-          onRecordWin(win, game?.name || "Slot");
         } else {
           setSlotWinMessage(isFree ? "Free Spin Round Complete!" : "Try again!");
         }
+
+        playRound({
+          game,
+          stake: isFree ? 0 : betAmount,
+          payout: win,
+          result: win > 0 ? "win" : "loss",
+          isFreeSpin: isFree,
+          details,
+        });
       }
     }, 70);
-  }, [isSpinning, user.balance, betAmount, game, onUseFreeSpin, onUpdateBalance, onRecordWin]);
+  }, [isSpinning, activeUser, betAmount, game, playRound, notify]);
+
+  // Handle Card Deal
+  const handleDealHand = () => {
+    if (isDealing || !game) return;
+    if (activeUser.balance < betAmount) {
+      setFeedbackMsg("Insufficient balance for this hand.");
+      notify("warning", "Insufficient demo balance.", "Top-up Required");
+      return;
+    }
+
+    setIsDealing(true);
+    const won = Math.random() > 0.4 ? betAmount * 2 : 0;
+    const details = won > 0 ? `Player Hand Won (+₹${won})` : "Dealer Hand Won";
+
+    const res = playRound({
+      game,
+      stake: betAmount,
+      payout: won,
+      result: won > 0 ? "win" : "loss",
+      isFreeSpin: false,
+      details,
+    });
+
+    if (onUpdateBalance && res.balanceAfter !== undefined) {
+      onUpdateBalance(res.balanceAfter);
+    }
+
+    if (won > 0) {
+      setFeedbackMsg(`🏆 Round Result: Player Hand Won +₹${won}!`);
+    } else {
+      setFeedbackMsg("Round Result: Dealer Won. Try again!");
+    }
+
+    setTimeout(() => setIsDealing(false), 500);
+  };
 
   if (!isOpen || !game) return null;
 
@@ -202,7 +278,7 @@ export function GameModal({
             <div className="px-3 py-1 rounded-full bg-[#0A0A0A] border border-[#333333] text-xs font-semibold text-[#D1AE52]">
               <span>Demo Balance: </span>
               <span className="text-white font-mono font-bold">
-                ₹ {user.balance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+                ₹ {activeUser.balance.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </span>
             </div>
             <button
@@ -370,20 +446,11 @@ export function GameModal({
                 Interactive demo table is ready. Simulated chip value: ₹{betAmount}.
               </p>
               <button
-                onClick={() => {
-                  const won = Math.random() > 0.4 ? betAmount * 2 : 0;
-                  if (won > 0) {
-                    onUpdateBalance(user.balance + won);
-                    onRecordWin(won, game.name);
-                    setFeedbackMsg(`🏆 Round Result: Player Hand Won +₹${won}!`);
-                  } else {
-                    onUpdateBalance(Math.max(0, user.balance - betAmount));
-                    setFeedbackMsg("Round Result: Dealer Won. Try again!");
-                  }
-                }}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-black text-sm uppercase shadow-xl hover:brightness-110 active:scale-95 transition-all"
+                disabled={isDealing}
+                onClick={handleDealHand}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-black text-sm uppercase shadow-xl hover:brightness-110 active:scale-95 transition-all disabled:opacity-50"
               >
-                Deal Hand (Bet ₹{betAmount})
+                {isDealing ? "Dealing Hand..." : `Deal Hand (Bet ₹${betAmount})`}
               </button>
             </div>
           )}

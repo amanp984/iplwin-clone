@@ -150,6 +150,7 @@ export const INITIAL_TASKS: TaskItem[] = [
     progress: 1,
     maxProgress: 1,
     claimed: false,
+    isDaily: true,
   },
   {
     id: "task_play3",
@@ -160,9 +161,10 @@ export const INITIAL_TASKS: TaskItem[] = [
     targetGameId: 3150049,
     targetGameName: "Super Ace",
     icon: "🎮",
-    progress: 1,
+    progress: 0,
     maxProgress: 3,
     claimed: false,
+    isDaily: true,
   },
   {
     id: "task_aviator",
@@ -195,20 +197,28 @@ export const DEFAULT_GUEST_USER: UserProfile = {
   username: "Guest Player",
   phone: "",
   balance: 0,
+  lockedBalance: 0,
   vipLevel: 0,
+  vipPoints: 0,
   avatar: "👤",
   isLoggedIn: false,
   earnedFreeSpins: {}, // Rule 13: Free spins are NOT default! They are empty until earned from tasks.
   completedTasks: [],
+  totalRoundsPlayed: 0,
+  totalDemoWins: 0,
 };
 
 export const INITIAL_TRANSACTIONS: WalletTransaction[] = [
   {
     id: "tx_welcome",
-    type: "task_reward",
+    type: "bonus",
     amount: 111,
     title: "New Member Starter Demo Bonus",
-    timestamp: "Just now",
+    description: "Simulated registration demonstration chips",
+    reference: "DEMO-INIT-001",
+    timestamp: "Welcome",
     status: "completed",
+    isDemo: true,
   },
 ];
+

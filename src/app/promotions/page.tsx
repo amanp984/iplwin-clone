@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { UserProfile, WalletTransaction } from "@/types/site";
-import { DEFAULT_GUEST_USER, INITIAL_TRANSACTIONS } from "@/components/sites/iplwin/home/data";
+import { useDemo } from "@/lib/DemoContext";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
 import { SiteFooter } from "@/components/sites/iplwin/home/SiteFooter";
@@ -14,15 +13,25 @@ import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModa
 
 export default function PromotionsPage() {
   const router = useRouter();
-  const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
-  const [transactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
+  const {
+    user,
+    transactions,
+    gameHistory,
+    isHydrated,
+    login,
+    logout,
+    deposit,
+    withdraw,
+    resetDemoAccount,
+  } = useDemo();
+
   const [activeTab, setActiveTab] = useState<"all" | "member" | "vip" | "cashback">("all");
   const [toast, setToast] = useState("");
 
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
-  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history">("deposit");
+  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history" | "game_history">("deposit");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const promos = [
@@ -108,6 +117,17 @@ export default function PromotionsPage() {
       setTimeout(() => setToast(""), 3000);
     }
   };
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-[#D1AE52] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-gray-400 font-mono tracking-wider uppercase">Loading Promotions...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
@@ -260,16 +280,7 @@ export default function PromotionsPage() {
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(phone, mode) => {
-          const phoneNumber = phone || "9876543210";
-          const bonus = mode === "register" ? 111 : 0;
-          setUser((prev) => ({
-            ...prev,
-            isLoggedIn: true,
-            phone: phoneNumber,
-            username: `Player_${phoneNumber.slice(-4)}`,
-            balance: prev.balance + bonus,
-            vipLevel: Math.max(1, prev.vipLevel),
-          }));
+          login(phone || "9876543210", mode);
         }}
       />
 
@@ -279,12 +290,9 @@ export default function PromotionsPage() {
         onClose={() => setIsWalletOpen(false)}
         user={user}
         transactions={transactions}
-        onDemoDeposit={(amount) =>
-          setUser((prev) => ({ ...prev, balance: prev.balance + amount }))
-        }
-        onDemoWithdraw={(amount) =>
-          setUser((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) }))
-        }
+        gameHistory={gameHistory}
+        onDemoDeposit={(amount) => deposit(amount)}
+        onDemoWithdraw={(amount, account, ifsc) => withdraw(amount, account, ifsc)}
       />
 
       <UserProfileModal
@@ -296,11 +304,9 @@ export default function PromotionsPage() {
           setWalletTab(tab);
           setIsWalletOpen(true);
         }}
-        onOpenTasks={() => setIsProfileOpen(false)}
-        onLogout={() => {
-          setUser(DEFAULT_GUEST_USER);
-          setIsProfileOpen(false);
-        }}
+        onOpenTasks={() => router.push("/rewards")}
+        onLogout={logout}
+        onResetDemo={resetDemoAccount}
       />
     </div>
   );

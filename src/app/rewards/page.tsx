@@ -2,12 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { UserProfile, TaskItem, WalletTransaction } from "@/types/site";
-import {
-  DEFAULT_GUEST_USER,
-  INITIAL_TASKS,
-  INITIAL_TRANSACTIONS,
-} from "@/components/sites/iplwin/home/data";
+import { useDemo } from "@/lib/DemoContext";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
 import { SiteFooter } from "@/components/sites/iplwin/home/SiteFooter";
@@ -17,49 +12,55 @@ import { WalletModal } from "@/components/sites/iplwin/home/WalletModal";
 import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModal";
 
 export default function RewardsPage() {
-  const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
-  const [tasks, setTasks] = useState<TaskItem[]>(INITIAL_TASKS);
-  const [transactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
+  const {
+    user,
+    tasks,
+    transactions,
+    gameHistory,
+    isHydrated,
+    login,
+    logout,
+    deposit,
+    withdraw,
+    claimTask,
+    resetDemoAccount,
+  } = useDemo();
+
   const [claimToast, setClaimToast] = useState("");
 
   // Modals state
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authMode, setAuthMode] = useState<"login" | "register">("login");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
-  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history">("deposit");
+  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history" | "game_history">("deposit");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  const handleClaimTask = (taskId: string) => {
+  const handleClaim = (taskId: string) => {
     const task = tasks.find((t) => t.id === taskId);
-    if (!task || task.claimed || task.progress < task.maxProgress) return;
-
-    if (task.rewardType === "free_spins" && task.targetGameId) {
-      setUser((prev) => ({
-        ...prev,
-        earnedFreeSpins: {
-          ...prev.earnedFreeSpins,
-          [task.targetGameId!]: (prev.earnedFreeSpins[task.targetGameId!] || 0) + task.rewardAmount,
-        },
-        completedTasks: [...prev.completedTasks, taskId],
-      }));
-      setClaimToast(`🎉 Claimed ${task.rewardAmount} Free Spins for ${task.targetGameName}!`);
-    } else if (task.rewardType === "demo_cash") {
-      setUser((prev) => ({
-        ...prev,
-        balance: prev.balance + task.rewardAmount,
-        completedTasks: [...prev.completedTasks, taskId],
-      }));
-      setClaimToast(`🎉 Claimed ₹${task.rewardAmount} Demo Credits!`);
+    if (!task) return;
+    const ok = claimTask(taskId);
+    if (ok) {
+      if (task.rewardType === "free_spins") {
+        setClaimToast(`🎉 Claimed ${task.rewardAmount} Free Spins for ${task.targetGameName}!`);
+      } else {
+        setClaimToast(`🎉 Claimed ₹${task.rewardAmount} Demo Credits!`);
+      }
+      setTimeout(() => setClaimToast(""), 4000);
     }
-
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, claimed: true } : t))
-    );
-
-    setTimeout(() => setClaimToast(""), 4000);
   };
 
-  const totalEarnedSpins = Object.values(user.earnedFreeSpins).reduce((a, b) => a + b, 0);
+  const totalEarnedSpins = Object.values(user.earnedFreeSpins || {}).reduce((a, b) => a + b, 0);
+
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-[#D1AE52] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-gray-400 font-mono tracking-wider uppercase">Loading Rewards Hub...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
@@ -128,13 +129,13 @@ export default function RewardsPage() {
               <span>{tasks.filter((t) => t.claimed).length}</span>
               <span className="text-base text-gray-400 font-normal">/ {tasks.length}</span>
             </div>
-            <p className="text-[11px] text-gray-500 mt-1">Daily resets at 00:00 UTC</p>
+            <p className="text-[11px] text-gray-500 mt-1">Daily tasks reset automatically each local day</p>
           </div>
 
           <div className="p-5 rounded-2xl bg-[#141414] border border-[#2B2B2B] shadow-sm">
             <span className="text-gray-400 text-xs font-semibold uppercase block mb-1">Demo Play Balance</span>
             <div className="text-3xl font-black text-white font-mono flex items-center gap-2">
-              <span>₹{user.balance.toLocaleString()}</span>
+              <span>₹{user.balance.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
             </div>
             <p className="text-[11px] text-gray-500 mt-1">Simulated entertainment funds</p>
           </div>
@@ -207,7 +208,14 @@ export default function RewardsPage() {
                         {task.icon}
                       </span>
                       <div>
-                        <h3 className="text-sm font-bold text-white">{task.title}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold text-white">{task.title}</h3>
+                          {task.isDaily && (
+                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-[#D1AE52]/20 text-[#E9CA78] font-bold uppercase">
+                              Daily
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-gray-400 mt-0.5">{task.description}</p>
                       </div>
                     </div>
@@ -240,7 +248,7 @@ export default function RewardsPage() {
                       <span className="text-xs font-bold text-gray-500 uppercase">✓ Claimed</span>
                     ) : isReady ? (
                       <button
-                        onClick={() => handleClaimTask(task.id)}
+                        onClick={() => handleClaim(task.id)}
                         className="px-4 py-1.5 rounded-lg bg-gradient-to-r from-[#04BE02] to-[#009688] text-white font-extrabold text-xs uppercase shadow hover:brightness-110 active:scale-95 transition-all"
                       >
                         Claim Reward
@@ -289,16 +297,7 @@ export default function RewardsPage() {
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
         onSuccess={(phone, mode) => {
-          const phoneNumber = phone || "9876543210";
-          const bonus = mode === "register" ? 111 : 0;
-          setUser((prev) => ({
-            ...prev,
-            isLoggedIn: true,
-            phone: phoneNumber,
-            username: `Player_${phoneNumber.slice(-4)}`,
-            balance: prev.balance + bonus,
-            vipLevel: Math.max(1, prev.vipLevel),
-          }));
+          login(phone || "9876543210", mode);
         }}
       />
 
@@ -308,12 +307,9 @@ export default function RewardsPage() {
         onClose={() => setIsWalletOpen(false)}
         user={user}
         transactions={transactions}
-        onDemoDeposit={(amount) =>
-          setUser((prev) => ({ ...prev, balance: prev.balance + amount }))
-        }
-        onDemoWithdraw={(amount) =>
-          setUser((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) }))
-        }
+        gameHistory={gameHistory}
+        onDemoDeposit={(amount) => deposit(amount)}
+        onDemoWithdraw={(amount, account, ifsc) => withdraw(amount, account, ifsc)}
       />
 
       <UserProfileModal
@@ -326,10 +322,8 @@ export default function RewardsPage() {
           setIsWalletOpen(true);
         }}
         onOpenTasks={() => setIsProfileOpen(false)}
-        onLogout={() => {
-          setUser(DEFAULT_GUEST_USER);
-          setIsProfileOpen(false);
-        }}
+        onLogout={logout}
+        onResetDemo={resetDemoAccount}
       />
     </div>
   );

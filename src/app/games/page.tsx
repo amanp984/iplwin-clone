@@ -1,13 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Game, UserProfile, TaskItem, WalletTransaction } from "@/types/site";
-import {
-  GAMES,
-  DEFAULT_GUEST_USER,
-  INITIAL_TASKS,
-  INITIAL_TRANSACTIONS,
-} from "@/components/sites/iplwin/home/data";
+import { Game } from "@/types/site";
+import { GAMES } from "@/components/sites/iplwin/home/data";
+import { useDemo } from "@/lib/DemoContext";
 import { SiteHeader } from "@/components/sites/iplwin/home/SiteHeader";
 import { NoticeMarquee } from "@/components/sites/iplwin/home/NoticeMarquee";
 import { CategoryNav } from "@/components/sites/iplwin/home/CategoryNav";
@@ -22,15 +18,26 @@ import { WalletModal } from "@/components/sites/iplwin/home/WalletModal";
 import { UserProfileModal } from "@/components/sites/iplwin/home/UserProfileModal";
 
 export default function GamesPage() {
+  const {
+    user,
+    tasks,
+    transactions,
+    gameHistory,
+    isHydrated,
+    login,
+    logout,
+    deposit,
+    withdraw,
+    claimTask,
+    playRound,
+    useFreeSpin,
+    resetDemoAccount,
+  } = useDemo();
+
   const [activeCategory, setActiveCategory] = useState("hot");
   const [activeProvider, setActiveProvider] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [activeLanguage, setActiveLanguage] = useState("en");
-
-  // User state
-  const [user, setUser] = useState<UserProfile>(DEFAULT_GUEST_USER);
-  const [tasks, setTasks] = useState<TaskItem[]>(INITIAL_TASKS);
-  const [transactions, setTransactions] = useState<WalletTransaction[]>(INITIAL_TRANSACTIONS);
 
   // Modals state
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -39,7 +46,7 @@ export default function GamesPage() {
   const [activeGame, setActiveGame] = useState<Game | null>(null);
   const [gameMode, setGameMode] = useState<"real" | "demo">("demo");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
-  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history">("deposit");
+  const [walletTab, setWalletTab] = useState<"deposit" | "withdraw" | "history" | "game_history">("deposit");
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isTasksOpen, setIsTasksOpen] = useState(false);
 
@@ -48,20 +55,7 @@ export default function GamesPage() {
     setIsAuthOpen(true);
   };
 
-  const handleAuthSuccess = (phone?: string, mode?: "login" | "register") => {
-    const phoneNumber = phone || "9876543210";
-    const bonus = mode === "register" ? 111 : 0;
-    setUser((prev) => ({
-      ...prev,
-      isLoggedIn: true,
-      phone: phoneNumber,
-      username: `Player_${phoneNumber.slice(-4)}`,
-      balance: prev.balance + bonus,
-      vipLevel: Math.max(1, prev.vipLevel),
-    }));
-  };
-
-  const handleOpenWallet = (tab: "deposit" | "withdraw" | "history" = "deposit") => {
+  const handleOpenWallet = (tab: "deposit" | "withdraw" | "history" | "game_history" = "deposit") => {
     if (!user.isLoggedIn) {
       handleOpenAuth("login");
       return;
@@ -79,63 +73,16 @@ export default function GamesPage() {
     setGameMode(mode);
   };
 
-  const handleUseFreeSpin = (gameId: number | string) => {
-    setUser((prev) => {
-      const current = prev.earnedFreeSpins[gameId] || 0;
-      if (current <= 0) return prev;
-      return {
-        ...prev,
-        earnedFreeSpins: {
-          ...prev.earnedFreeSpins,
-          [gameId]: current - 1,
-        },
-      };
-    });
-  };
-
-  const handleRecordWin = (amount: number, gameName: string) => {
-    setUser((prev) => ({
-      ...prev,
-      balance: prev.balance + amount,
-    }));
-    setTransactions((prev) => [
-      {
-        id: `tx_win_${Date.now()}`,
-        type: "win",
-        amount,
-        title: `${gameName} Demo Win`,
-        timestamp: "Just now",
-        status: "completed",
-      },
-      ...prev,
-    ]);
-  };
-
-  const handleClaimTask = (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task || task.claimed || task.progress < task.maxProgress) return;
-
-    if (task.rewardType === "free_spins" && task.targetGameId) {
-      setUser((prev) => ({
-        ...prev,
-        earnedFreeSpins: {
-          ...prev.earnedFreeSpins,
-          [task.targetGameId!]: (prev.earnedFreeSpins[task.targetGameId!] || 0) + task.rewardAmount,
-        },
-        completedTasks: [...prev.completedTasks, taskId],
-      }));
-    } else if (task.rewardType === "demo_cash") {
-      setUser((prev) => ({
-        ...prev,
-        balance: prev.balance + task.rewardAmount,
-        completedTasks: [...prev.completedTasks, taskId],
-      }));
-    }
-
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, claimed: true } : t))
+  if (!isHydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-[#D1AE52] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-xs text-gray-400 font-mono tracking-wider uppercase">Loading Games Lobby...</p>
+        </div>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0A0A0A] text-white">
@@ -209,7 +156,9 @@ export default function GamesPage() {
         isOpen={isAuthOpen}
         initialMode={authMode}
         onClose={() => setIsAuthOpen(false)}
-        onSuccess={handleAuthSuccess}
+        onSuccess={(phone, mode) => {
+          login(phone || "9876543210", mode);
+        }}
       />
 
       <LanguageModal
@@ -225,11 +174,8 @@ export default function GamesPage() {
         mode={gameMode}
         user={user}
         onClose={() => setActiveGame(null)}
-        onUpdateBalance={(newBal) =>
-          setUser((prev) => ({ ...prev, balance: newBal }))
-        }
-        onUseFreeSpin={handleUseFreeSpin}
-        onRecordWin={handleRecordWin}
+        onPlayRound={playRound}
+        onUseFreeSpin={useFreeSpin}
       />
 
       <RewardsTasksModal
@@ -237,7 +183,7 @@ export default function GamesPage() {
         onClose={() => setIsTasksOpen(false)}
         tasks={tasks}
         user={user}
-        onClaimTask={handleClaimTask}
+        onClaimTask={claimTask}
         onLaunchGameById={(gameId) => {
           const target = GAMES.find((g) => g.id === gameId);
           if (target) {
@@ -253,12 +199,9 @@ export default function GamesPage() {
         onClose={() => setIsWalletOpen(false)}
         user={user}
         transactions={transactions}
-        onDemoDeposit={(amount) =>
-          setUser((prev) => ({ ...prev, balance: prev.balance + amount }))
-        }
-        onDemoWithdraw={(amount) =>
-          setUser((prev) => ({ ...prev, balance: Math.max(0, prev.balance - amount) }))
-        }
+        gameHistory={gameHistory}
+        onDemoDeposit={(amount) => deposit(amount)}
+        onDemoWithdraw={(amount, account, ifsc) => withdraw(amount, account, ifsc)}
       />
 
       <UserProfileModal
@@ -273,10 +216,8 @@ export default function GamesPage() {
           setIsProfileOpen(false);
           setIsTasksOpen(true);
         }}
-        onLogout={() => {
-          setUser(DEFAULT_GUEST_USER);
-          setIsProfileOpen(false);
-        }}
+        onLogout={logout}
+        onResetDemo={resetDemoAccount}
       />
     </div>
   );

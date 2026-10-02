@@ -34,6 +34,8 @@ export const viewport: Viewport = {
   userScalable: false,
 };
 
+import { ClientProviders } from "@/components/providers/ClientProviders";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -42,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased dark`}>
       <body className="min-h-full flex flex-col bg-[#0A0A0A] text-white selection:bg-[#D1AE52] selection:text-black overflow-x-hidden">
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );
