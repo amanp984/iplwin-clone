@@ -139,13 +139,13 @@ export default function ProfilePage() {
           <div className="p-6 rounded-2xl bg-[#141414] border border-[#2B2B2B] shadow-md flex flex-col justify-between">
             <div>
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider block mb-1">
-                Total Demo Wins
+                Winning Rounds
               </span>
               <div className="text-3xl font-black text-[#04BE02] font-mono">
-                ₹{(user.totalDemoWins || 0).toLocaleString("en-IN")}
+                {user.totalDemoWins || 0} Wins
               </div>
               <span className="text-[10px] text-gray-500 mt-1 block">
-                From {user.totalRoundsPlayed || 0} genuine played rounds
+                {user.totalRoundsPlayed > 0 ? Math.round(((user.totalDemoWins || 0) / user.totalRoundsPlayed) * 100) : 0}% win rate across {user.totalRoundsPlayed || 0} played rounds
               </span>
             </div>
             <button

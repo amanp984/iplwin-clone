@@ -83,9 +83,9 @@ export function UserProfileModal({
               <span className="text-base font-black text-white font-mono">{user.totalRoundsPlayed || 0}</span>
             </div>
             <div className="p-2.5 rounded-xl bg-[#0D0D0D] border border-[#222222]">
-              <span className="text-[10px] text-gray-400 block font-semibold uppercase">Total Demo Wins</span>
+              <span className="text-[10px] text-gray-400 block font-semibold uppercase">Winning Rounds</span>
               <span className="text-base font-black text-[#04BE02] font-mono">
-                ₹{(user.totalDemoWins || 0).toLocaleString("en-IN")}
+                {user.totalDemoWins || 0} Wins
               </span>
             </div>
           </div>

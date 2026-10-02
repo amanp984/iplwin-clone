@@ -91,9 +91,10 @@ export function GameGrid({
             return (
               <div
                 key={game.id}
+                onClick={() => onLaunchGame(game, "demo")}
                 onMouseEnter={() => setHoveredId(game.id)}
                 onMouseLeave={() => setHoveredId(null)}
-                className="group relative flex flex-col bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#2A2A2A] hover:border-[#D1AE52]/80 transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-xl hover:shadow-[#D1AE52]/10"
+                className="group relative flex flex-col bg-[#1A1A1A] rounded-xl overflow-hidden border border-[#2A2A2A] hover:border-[#D1AE52]/80 transition-all duration-300 transform hover:-translate-y-1 shadow-md hover:shadow-xl hover:shadow-[#D1AE52]/10 cursor-pointer"
               >
                 {/* Thumbnail Container */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#0A0A0A]">
@@ -142,14 +143,20 @@ export function GameGrid({
                     }`}
                   >
                     <button
-                      onClick={() => onLaunchGame(game, "real")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLaunchGame(game, "real");
+                      }}
                       className="w-full py-2 rounded-lg bg-gradient-to-r from-[#E9CA78] via-[#D1AE52] to-[#C39949] text-black font-extrabold text-xs shadow-md transition-transform hover:scale-105 active:scale-95 flex items-center justify-center gap-1.5"
                     >
                       <span>▶</span>
                       <span>Play Now</span>
                     </button>
                     <button
-                      onClick={() => onLaunchGame(game, "demo")}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLaunchGame(game, "demo");
+                      }}
                       className="w-full py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-[11px] border border-white/20 transition-colors"
                     >
                       Demo Play
